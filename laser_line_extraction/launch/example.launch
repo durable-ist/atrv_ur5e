@@ -1,3 +1,5 @@
+<?xml version="1.0"?>
+
 <launch>
   <node name="line_extractor" pkg="laser_line_extraction" type="line_extraction_node">
     <param name="~frequency" value="30.0" />
@@ -16,4 +18,8 @@
     <param name="~min_line_points" value="10" />
   </node>
 </launch>
+
+
+
+<!-- falta fazer o tuning disto para o atrv -->
 
