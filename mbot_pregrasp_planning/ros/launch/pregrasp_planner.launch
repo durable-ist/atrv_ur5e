@@ -17,16 +17,16 @@
   <node pkg="mcr_manipulation_pose_selector" type="reachability_pose_selector_node" name="pregrasp_pipeline_pose_selector" output="screen">
     
     <param name="loop_rate" type="double" value="10.0"/>
-    <param name="move_group" type="str" value="move_group"/>
+    <param name="move_group" type="str" value="/move_group"/>
     <param name="arm" type="str" value="manipulator"/>
     <rosparam param="linear_offset">
       - 0.00
       - 0.00
       - 0.00  <!--0.20 for 20 centimeters higher-->
     </rosparam>
-    <remap from="~goal_pose_array" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pose_generator/poses_list"/>
-    <remap from="~joint_configuration" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/configuration_out"/>
-    <remap from="~selected_pose" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/selected_pose"/>
+    <remap from="~goal_pose_array" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pose_generator/poses_list"/>
+    <remap from="~joint_configuration" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pose_selector/configuration_out"/>
+    <remap from="~selected_pose" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pose_selector/selected_pose"/>
     <remap from="~event_in" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pose_selector/event_in"/>
     <remap from="~event_out" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pose_selector/event_out"/>
     <remap from="~flag" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pose_selector/flag"/>
@@ -40,9 +40,9 @@
     <param name="~loop_rate"  type="double" value="10"/>
     <param name="~move_group"  type="string" value="$(arg namespace_robot)/move_group"/>
     <param name="~arm"  type="string" value="manipulator"/>
-    <remap from="~target_configuration" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/configuration_out"/>
-    <remap from="~event_in" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/move_arm_planned_motion/event_in"/>
-    <remap from="~event_out" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/move_arm_planned_motion/event_out"/>
+    <remap from="~target_configuration" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pose_selector/configuration_out"/>
+    <remap from="~event_in" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_move_arm_planned_motion/event_in"/>
+    <remap from="~event_out" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_move_arm_planned_motion/event_out"/>
   </node>
 
   <node pkg="mbot_moveit_planning_scene" type="mbot_moveit_scene_node" name="mbot_moveit_scene_node" output="screen">
@@ -61,7 +61,7 @@
 
     <!-- transform the pose to the reference frame of the moveit planning interface -->
     <!-- this is useful because typically the pose is comming from perception in odom frame -->
-  <node pkg="mcr_manipulation_measurers" type="pose_transformer_node" name="pose_transformer" output="screen">
+  <node pkg="mcr_manipulation_measurers" type="pose_transformer_node" name="pregrasp_pipeline_pose_transformer" output="screen">
     <param name="loop_rate" type="double" value="10.0"/>
     <param name="wait_for_transform" type="double" value="0.1"/>
     <param name="target_frame" type="str" value="$(arg reference_frame)"/>
@@ -69,7 +69,7 @@
     <remap from="~pose_in" to="$(arg pregrasp_planner_pose_in)" />
   </node>
 
-  <node pkg="mir_pregrasp_planning" type="simple_pregrasp_planner_node" name="pregrasp_planner" output="screen">
+  <node pkg="mir_pregrasp_planning" type="simple_pregrasp_planner_node" name="pregrasp_pipeline_pregrasp_planner" output="screen">
 
     <param name="loop_rate" type="double" value="10.0"/>
     
@@ -87,7 +87,7 @@
 
     <param name="angular_tolerance" type="double" value="10.0"/> 
 
-    <remap from="~pose_in" to="pose_transformer/transformed_pose"/>
+    <remap from="~pose_in" to="pregrasp_pipeline_pose_transformer/transformed_pose"/>
     <rosparam param="linear_offset">
       - 0.00
       - 0.00
@@ -96,31 +96,31 @@
 
   </node>
 
-  <node pkg="mcr_pose_generation" type="pose_generator_node" name="pose_generator" output="screen">
+  <node pkg="mcr_pose_generation" type="pose_generator_node" name="pregrasp_pipeline_pose_generator" output="screen">
     <rosparam command="load" file="$(find mbot_pregrasp_planning)/ros/config/gripper_configuration_matrix.yaml" />
     
     <param name="loop_rate"  type="double" value="10.0"/>
     <param name="linear_step" type="double" value="0.01"/>
     <param name="angular_step" type="double" value="10"/>
     <param name="gripper_config_matrix" type="str" value="mbot_left_arm_gripper"/>
-    <remap from="~target_pose" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_planner/pose_out"/>
-    <remap from="~sampling_parameters" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_planner/sampling_parameters"/>
+    <remap from="~target_pose" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pregrasp_planner/pose_out"/>
+    <remap from="~sampling_parameters" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pregrasp_planner/sampling_parameters"/>
   </node>
 
   <!-- COORDINATOR EVENT based to command/monitor previous pregrasp components -->
-  <node pkg="mir_pregrasp_planning" type="pregrasp_planner_pipeline_node" name="coordinator" output="screen">
+  <node pkg="mir_pregrasp_planning" type="pregrasp_planner_pipeline_node" name="pregrasp_pipeline_coordinator" output="screen">
 
     <param name="loop_rate" type="double" value="30.0"/>
     <!-- REMAP ROS TOPICS -->
-    <remap from="~event_in" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/event_in"/>
-    <remap from="~event_out" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/event_out"/>
-    <remap from="~start_pose_transformer" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pose_transformer/event_in"/>
-    <remap from="~start_pregrasp_planner" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_planner/event_in"/>
-    <remap from="~start_pose_generator" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pose_generator/event_in"/>
+    <remap from="~event_in" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_event_in"/>
+    <remap from="~event_out" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_event_out"/>
+    <remap from="~start_pose_transformer" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pose_transformer/event_in"/>
+    <remap from="~start_pregrasp_planner" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pregrasp_planner/event_in"/>
+    <remap from="~start_pose_generator" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pose_generator/event_in"/>
     <remap from="~start_pose_selector" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pose_selector/event_in"/>
-    <remap from="~pose_transformer_status" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pose_transformer/event_out"/>
-    <remap from="~pregrasp_planner_status" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_planner/event_out"/>
-    <remap from="~pose_generator_status" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pose_generator/event_out"/>
+    <remap from="~pose_transformer_status" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pose_transformer/event_out"/>
+    <remap from="~pregrasp_planner_status" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pregrasp_planner/event_out"/>
+    <remap from="~pose_generator_status" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pose_generator/event_out"/>
     <remap from="~pose_selector_status" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pose_selector/event_out"/>
   </node>
 

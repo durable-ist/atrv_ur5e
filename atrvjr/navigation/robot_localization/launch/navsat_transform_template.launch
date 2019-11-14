@@ -39,7 +39,7 @@
 -->
 
 <launch>
-  <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform_node" clear_params="true" output="screen">
+  <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform_node" clear_params="true">
     <rosparam command="load" file="$(find robot_localization)/params/navsat_transform_template.yaml" />
     <remap from="imu/data" to="/atrvjr/mpu/imu/data"/>
     <remap from="gps/fix" to="/novatel/novatel_node/gps_fix_psr"/>

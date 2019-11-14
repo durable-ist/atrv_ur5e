@@ -1,6 +1,11 @@
+<?xml version="1.0"?>
+
 <launch>
 
   <include file="$(find ur5_e_moveit_config_joao)/launch/planning_context.launch" />
+
+  <rosparam file="$(find ur_e_gazebo)/controller/joint_state_controller.yaml" command="load"/>
+
 
   <!-- GDB Debug Option -->
   <arg name="debug" default="false" />
@@ -65,6 +70,8 @@
     <param name="jiggle_fraction" value="$(arg jiggle_fraction)" />
     <param name="capabilities" value="$(arg capabilities)"/>
     <param name="disable_capabilities" value="$(arg disable_capabilities)"/>
+
+    <!-- <remap from="/robot_description_semantic" to="/mbzirc2020_0/robot_description_semantic"/> -->
 
     <!-- Publish the planning scene of the physical robot so that rviz plugin can know actual robot -->
     <param name="planning_scene_monitor/publish_planning_scene" value="$(arg publish_monitored_planning_scene)" />

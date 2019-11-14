@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<launch>
+   
+<!-- POR AQUI TAMBEM O ROBOT LOCALIZATION?????-->    
+
+
+
+    <include file="$(find ur5_e_moveit_config_joao)/launch/move_group.launch"/>
+    <include file="$(find mbot_pregrasp_planning)/ros/launch/pregrasp_planner.launch"/>
+
+    <include file="$(find husky_navigation)/launch/move_base_mapless_demo.launch"/>
+
+
+</launch>
