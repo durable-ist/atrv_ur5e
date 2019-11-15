@@ -3,7 +3,7 @@
        name="atrv_ur5e" >
 
 
-  <xacro:include filename="$(find ur_e_description)/urdf/common.gazebo.xacro" />
+  <xacro:include filename="$(find ur_e_gazebo)/controller/common.gazebo.xacro" />
 
 
   <xacro:include filename="$(find atrvjr_description)/urdf/atrvjr.xacro"/>

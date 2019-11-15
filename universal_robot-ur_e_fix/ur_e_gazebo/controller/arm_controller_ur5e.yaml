@@ -1,4 +1,4 @@
-mbzirc2020_0/arm_controller:
+arm_controller:
   type: effort_controllers/JointTrajectoryController
   joints: 
      - shoulder_pan_joint

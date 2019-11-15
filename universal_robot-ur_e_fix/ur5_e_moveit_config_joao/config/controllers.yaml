@@ -1,5 +1,5 @@
 controller_list:
-  - name: "/mbzirc2020_0/arm_controller"                #"scaled_pos_traj_controller" mudei para arm_controller para a simulacao/gazebo
+  - name: "arm_controller"                #"scaled_pos_traj_controller" mudei para arm_controller para a simulacao/gazebo
     action_ns: follow_joint_trajectory
     type: FollowJointTrajectory
     joints:

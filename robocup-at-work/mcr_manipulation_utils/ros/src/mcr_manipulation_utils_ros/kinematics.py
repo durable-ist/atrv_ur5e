@@ -41,14 +41,14 @@ class Kinematics:
 
         # service clients
         rospy.loginfo("Waiting for 'compute_ik' service")
-        rospy.wait_for_service('/compute_ik')
-        self.ik_client = rospy.ServiceProxy('/compute_ik',
+        rospy.wait_for_service('/mbzirc2020_0/compute_ik')
+        self.ik_client = rospy.ServiceProxy('/mbzirc2020_0/compute_ik',
                                             moveit_msgs.srv.GetPositionIK)
         rospy.loginfo("Found service 'compute_ik'")
 
         rospy.loginfo("Waiting for 'compute_fk' service")
-        rospy.wait_for_service('/compute_fk')
-        self.fk_client = rospy.ServiceProxy('/compute_fk',
+        rospy.wait_for_service('/mbzirc2020_0/compute_fk')
+        self.fk_client = rospy.ServiceProxy('/mbzirc2020_0/compute_fk',
                                             moveit_msgs.srv.GetPositionFK)
         rospy.loginfo("Found service 'compute_fk'")
 

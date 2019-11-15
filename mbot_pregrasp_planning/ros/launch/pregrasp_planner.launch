@@ -9,7 +9,7 @@
 
   <arg name= "namespace_robot" default=""/> <!-- ATENCAO - POR A BARRA -->
 
-  <arg name= "namespace_pregrasp" default=""/>  
+  <arg name= "namespace_pregrasp" default="mbzirc2020_0"/>  
 
 
 <!--   __________________MOVEIT DEPENDING NODES (reason why they are outside the group below)__________________________-->  
@@ -17,7 +17,7 @@
   <node pkg="mcr_manipulation_pose_selector" type="reachability_pose_selector_node" name="pregrasp_pipeline_pose_selector" output="screen">
     
     <param name="loop_rate" type="double" value="10.0"/>
-    <param name="move_group" type="str" value="/move_group"/>
+    <param name="move_group" type="str" value="move_group"/>
     <param name="arm" type="str" value="manipulator"/>
     <rosparam param="linear_offset">
       - 0.00
@@ -38,7 +38,7 @@
   <!-- moveit wrapper to move the arm to a desired arm configuration -->
   <node pkg="mcr_arm_motions" type="planned_motion_node" name="move_arm_planned_motion" output="screen">
     <param name="~loop_rate"  type="double" value="10"/>
-    <param name="~move_group"  type="string" value="$(arg namespace_robot)/move_group"/>
+    <param name="~move_group"  type="string" value="move_group"/>
     <param name="~arm"  type="string" value="manipulator"/>
     <remap from="~target_configuration" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pose_selector/configuration_out"/>
     <remap from="~event_in" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_move_arm_planned_motion/event_in"/>
