@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(mbot_moveit_planning_scene)
+project(atrv_moveit_planning_scene)
 
 find_package(catkin REQUIRED
  COMPONENTS

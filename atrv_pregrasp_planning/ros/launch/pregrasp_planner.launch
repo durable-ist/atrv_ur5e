@@ -48,7 +48,7 @@
 
   </node>
 
-  <node pkg="mbot_moveit_planning_scene" type="mbot_moveit_scene_node" name="mbot_moveit_scene_node" output="screen">
+  <node pkg="atrv_moveit_planning_scene" type="atrv_moveit_scene_node" name="atrv_moveit_scene_node" output="screen">
     <param name="~loop_rate" type="double" value="10"/>
     <remap from="/planning_scene" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/planning_scene"/>
   </node>
@@ -101,12 +101,12 @@
   </node>
 
   <node pkg="mcr_pose_generation" type="pose_generator_node" name="pregrasp_pipeline_pose_generator" output="screen">
-    <rosparam command="load" file="$(find mbot_pregrasp_planning)/ros/config/gripper_configuration_matrix.yaml" />
+    <rosparam command="load" file="$(find atrv_pregrasp_planning)/ros/config/gripper_configuration_matrix.yaml" />
     
     <param name="loop_rate"  type="double" value="10.0"/>
     <param name="linear_step" type="double" value="0.01"/>
     <param name="angular_step" type="double" value="10"/>
-    <param name="gripper_config_matrix" type="str" value="mbot_left_arm_gripper"/>
+    <param name="gripper_config_matrix" type="str" value="ur5e_gripper"/>
     <remap from="~target_pose" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pregrasp_planner/pose_out"/>
     <remap from="~sampling_parameters" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pregrasp_planner/sampling_parameters"/>
   </node>
@@ -135,7 +135,7 @@
   <!-- GUI Helper(s) -->
   <group if="$(arg gui)">
     <!-- use gui to publish pose -->
-    <include file="$(find mbot_pregrasp_planning)/ros/launch/pose_mock_up_gui.launch">
+    <include file="$(find atrv_pregrasp_planning)/ros/launch/pose_mock_up_gui.launch">
         <arg name="reference_frame" default="$(arg reference_frame)" />
     </include>
   </group>

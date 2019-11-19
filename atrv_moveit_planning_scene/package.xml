@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-    <name>mbot_moveit_planning_scene</name>
+    <name>atrv_moveit_planning_scene</name>
     <version>1.0.0</version>
     <description>
         Add world features to moveit planning scene, e.g. a cube.
@@ -10,7 +10,7 @@
     <license>GPLv3</license>
 
     <author email="olima@isr.tecnico.ulisboa.pt">Oscar Lima</author>
-    <maintainer email="olima@isr.tecnico.ulisboa.pt">Oscar Lima</maintainer>
+    <maintainer email="joaocabogoncalves@tecnico.ulisboa.pt">Joao Goncalves</maintainer>
 
     <buildtool_depend>catkin</buildtool_depend>
 

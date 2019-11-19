@@ -1,0 +1,6 @@
+#!/usr/bin/env python
+
+import atrv_moveit_planning_scene_ros.atrv_moveit_scene_node
+
+if __name__ == '__main__':
+    atrv_moveit_planning_scene_ros.atrv_moveit_scene_node.main()

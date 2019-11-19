@@ -3,9 +3,6 @@ boxes to planning scene to represent the workspace walls.
 #TODO this should be replaced in the future with the octomap
 Currently planning with octomap is too slow.
 """
-
-__author__ = 'moriarty'
-
 import rospy
 import std_msgs.msg
 import geometry_msgs.msg

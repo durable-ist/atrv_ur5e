@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package>
+  <name>atrv_pregrasp_planning</name>
+  <version>0.1.0</version>
+  <description>
+    Contains configuration of the mir_pregrasp_planning pkg.
+  </description>
+  <license>GPLv3</license>
+
+  <author email="joaocabogoncalves@tecnico.ulisboa.pt">Joao Goncalves</author>
+  <maintainer email="joaocabogoncalves@tecnico.ulisboa.pt">Joao Goncalves</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <run_depend>mir_pregrasp_planning</run_depend>
+
+</package>
