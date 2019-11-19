@@ -43,10 +43,14 @@
     <remap from="~target_configuration" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_pose_selector/configuration_out"/>
     <remap from="~event_in" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_move_arm_planned_motion/event_in"/>
     <remap from="~event_out" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/pregrasp_pipeline_move_arm_planned_motion/event_out"/>
+    <remap from="/collision_object" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/collision_object"/>
+    <remap from="/attached_collision_object" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/attached_collision_object"/>
+
   </node>
 
   <node pkg="mbot_moveit_planning_scene" type="mbot_moveit_scene_node" name="mbot_moveit_scene_node" output="screen">
     <param name="~loop_rate" type="double" value="10"/>
+    <remap from="/planning_scene" to="$(arg namespace_robot)/$(arg namespace_pregrasp)/planning_scene"/>
   </node>
 
 <!--   _________________________________MOVEIT DEPENDING NODES ENDING______________________________________________ -->
