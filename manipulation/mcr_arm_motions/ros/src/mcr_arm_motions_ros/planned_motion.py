@@ -166,11 +166,11 @@ class PlannedMotion(object):
             box_pose.pose.orientation.w = 1.0
             box_name = "box"
             eef_link = "ee_link"
-            self.scene.add_box(box_name, box_pose, size=(0.4, 0.2, 0.6))
+            #self.scene.add_box(box_name, box_pose, size=(0.4, 0.2, 0.6))
 
             rospy.sleep(2)
 
-            self.scene.attach_box(eef_link, box_name)    #falta acrescentar os touching links que servem para que o Moveit ignore collisions entre
+            #self.scene.attach_box(eef_link, box_name)    #falta acrescentar os touching links que servem para que o Moveit ignore collisions entre
                                                          # o attached object e estes links
 
             ########### REMOVE BOX FROM PLANNING SCENE ######################

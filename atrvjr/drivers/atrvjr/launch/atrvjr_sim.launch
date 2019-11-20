@@ -30,7 +30,11 @@
 
     <include file="$(find robot_localization)/launch/navsat_transform_template.launch" />
 
-    <include file="$(find atrvjr)/launch/bringup_common.launch" /> -->
+    <include file="$(find atrvjr)/launch/bringup_common.launch" />
+
+    <!-- <arg name="rvizconfig" default="$(find atrvjr_description)/launch/new_rviz_config.rviz"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" /> -->
+
   </group>
 
 

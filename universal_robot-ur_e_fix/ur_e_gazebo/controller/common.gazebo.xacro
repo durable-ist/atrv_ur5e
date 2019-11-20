@@ -47,7 +47,7 @@
  <gazebo>
     <plugin name="novatel_gps_sim" filename="libhector_gazebo_ros_gps.so">
       <alwaysOn>1</alwaysOn>
-      <updateRate>10.0</updateRate>
+      <updateRate>20.0</updateRate>
       <bodyName>novatel</bodyName>
       <topicName>fix</topicName>
       <velocityTopicName>fix_velocity</velocityTopicName>
@@ -91,7 +91,7 @@
       </ray>
       <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
         <topicName>scan</topicName>
-        <frameName>hokuyo</frameName>
+        <frameName>/hokuyo</frameName>
       </plugin>
     </sensor>
   </gazebo>
