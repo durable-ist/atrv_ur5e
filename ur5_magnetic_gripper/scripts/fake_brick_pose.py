@@ -10,28 +10,63 @@ import PyKDL #Vector, Rotation, Quaternion, Frame
 from mbzirc_comm_objs.srv import Magnetize, MagnetizeResponse
 from mbzirc_comm_objs.msg import GripperAttached
 from ur_msgs.srv import SetIO, SetIORequest
-from geometry_msgs.msg import WrenchStamped
-from std_msgs.msg import String
+
 
 from math import sqrt, pow
+
+import gazebo_msgs.srv
+import gazebo_ros_link_attacher.srv
+import std_msgs.msg
+import geometry_msgs.msg
 
 class node():
 
     def __init__(self):
 
-        #self.set_io = rospy.ServiceProxy('ur_driver/set_io', SetIO)
-        rospy.Service('magnetize', Magnetize, self.magnetize_cb)
 
-        self.pub = rospy.Publisher('attached', GripperAttached, queue_size=1)
-        self.pub2 = rospy.Publisher('/ur_hardware_interface/script_command', String, queue_size=1)
-        self.sub = rospy.Subscriber('/wrench', WrenchStamped, self.wrench_cb)
+        rospy.wait_for_service('/link_attacher_node/attach')
+        self.link_attacher_client= rospy.ServiceProxy('/link_attacher_node/attach',
+                                            gazebo_ros_link_attacher.srv.Attach)
+        rospy.loginfo("Found service 'link_attacher'")
 
-        self.attached = False
-        self.threshold = 25  #N
+        rospy.wait_for_service('/link_attacher_node/detach')
+        self.link_detacher_client= rospy.ServiceProxy('/link_attacher_node/detach',
+                                            gazebo_ros_link_attacher.srv.Attach)
+        rospy.loginfo("Found service 'link_detacher'")
+
+        rospy.wait_for_service('/gazebo/set_link_state')
+        self.set_link_client= rospy.ServiceProxy('/gazebo/set_link_state',
+                                            gazebo_msgs.srv.SetLinkState)
+        rospy.loginfo("Found service 'gazebo/set_link_state'")
+
+        rospy.Subscriber("~attach", std_msgs.msg.String, self.attach_cb)
+
+        rospy.Subscriber("~detach", std_msgs.msg.String, self.detach_cb)
 
 
 
-    def get_link_pose_cb(self,req):
+    def attach_cb(self,msg):
+
+        self.target_brick = msg.data
+        print self.target_brick
+
+
+        req = gazebo_msgs.msg.LinkState()
+        req.link_name= self.target_brick +"_link"
+        req.pose.position.y=0.3
+        req.pose.orientation.w=1
+        req.reference_frame = "wrist_3_link"
+
+        resp = self.set_link_client(req)
+        print resp
+
+        resp2 = self.link_attacher_client("mbzirc2020_0", "wrist_3_link", self.target_brick, self.target_brick + "_link")
+
+    def detach_cb(self,msg):
+
+        self.target_brick = msg.data
+
+        resp2 = self.link_detacher_client("mbzirc2020_0", "wrist_3_link", self.target_brick, self.target_brick + "_link")
 
 
 def main():
