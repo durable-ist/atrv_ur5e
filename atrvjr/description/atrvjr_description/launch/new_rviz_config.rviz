@@ -9,11 +9,11 @@ Panels:
         - /RobotModel1
         - /PlanningScene1/Scene Geometry1
         - /PlanningScene1/Scene Robot1
-        - /Pose1
         - /Pose2
         - /TF1/Frames1
+        - /Polygon1
+        - /Marker1
         - /Marker1/Namespaces1
-        - /PoseArray1
       Splitter Ratio: 0.61944443
     Tree Height: 457
   - Class: rviz/Selection
@@ -34,7 +34,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: LaserScan
 Toolbars:
   toolButtonStyle: 2
 Visualization Manager:
@@ -326,7 +326,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.0299999993
       Style: Flat Squares
-      Topic: /scan
+      Topic: /mbzirc2020_0/scan
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -400,6 +400,8 @@ Visualization Manager:
           Value: false
         upper_arm_link:
           Value: false
+        utm:
+          Value: false
         wrist_1_link:
           Value: false
         wrist_2_link:
@@ -412,56 +414,58 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        odom:
-          base_link:
-            arm_base_frame:
-              arm_base_link:
-                shoulder_link:
-                  upper_arm_link:
-                    forearm_link:
-                      wrist_1_link:
-                        wrist_2_link:
-                          camera_bottom_screw_frame:
-                            camera_link:
-                              camera_depth_frame:
-                                camera_color_frame:
-                                  camera_color_optical_frame:
-                                    {}
-                                camera_depth_optical_frame:
+        base_link:
+          arm_base_frame:
+            arm_base_link:
+              shoulder_link:
+                upper_arm_link:
+                  forearm_link:
+                    wrist_1_link:
+                      wrist_2_link:
+                        camera_bottom_screw_frame:
+                          camera_link:
+                            camera_depth_frame:
+                              camera_color_frame:
+                                camera_color_optical_frame:
                                   {}
-                                camera_left_ir_frame:
-                                  camera_left_ir_optical_frame:
-                                    {}
-                                camera_right_ir_frame:
-                                  camera_right_ir_optical_frame:
-                                    {}
-                          wrist_3_link:
-                            ee_link:
-                              {}
-                            tool0:
-                              {}
-            cbimu_frame:
+                              camera_depth_optical_frame:
+                                {}
+                              camera_left_ir_frame:
+                                camera_left_ir_optical_frame:
+                                  {}
+                              camera_right_ir_frame:
+                                camera_right_ir_optical_frame:
+                                  {}
+                        wrist_3_link:
+                          ee_link:
+                            {}
+                          tool0:
+                            {}
+          cbimu_frame:
+            {}
+          center_link:
+            {}
+          front_left_static:
+            front_left_wheel_link:
               {}
-            center_link:
+          front_right_static:
+            front_right_wheel_link:
               {}
-            front_left_static:
-              front_left_wheel_link:
-                {}
-            front_right_static:
-              front_right_wheel_link:
-                {}
-            hokuyo:
+          hokuyo:
+            {}
+          mpuimu_frame:
+            {}
+          novatel:
+            {}
+          rear_left_static:
+            rear_left_wheel_link:
               {}
-            mpuimu_frame:
+          rear_right_static:
+            rear_right_wheel_link:
               {}
-            novatel:
-              {}
-            rear_left_static:
-              rear_left_wheel_link:
-                {}
-            rear_right_static:
-              rear_right_wheel_link:
-                {}
+        odom:
+          utm:
+            {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -469,7 +473,7 @@ Visualization Manager:
       Color: 25; 255; 0
       Enabled: true
       Name: Polygon
-      Topic: /move_base/local_costmap/footprint
+      Topic: /mbzirc2020_0/move_base/local_costmap/footprint
       Unreliable: false
       Value: true
     - Angle Tolerance: 0.100000001
@@ -619,7 +623,7 @@ Visualization Manager:
       Marker Topic: /line_markers
       Name: Marker
       Namespaces:
-        {}
+        line_extraction: true
       Queue Size: 100
       Value: true
     - Alpha: 1
@@ -642,7 +646,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: odom
+    Fixed Frame: base_link
     Frame Rate: 30
   Name: root
   Tools:
@@ -663,7 +667,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.70135403
+      Distance: 4.25063276
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1

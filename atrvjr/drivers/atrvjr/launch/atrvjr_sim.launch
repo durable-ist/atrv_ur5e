@@ -36,8 +36,10 @@
 
     <include file="$(find atrvjr)/launch/bringup_common.launch" />
 
-    <!-- <arg name="rvizconfig" default="$(find atrvjr_description)/launch/new_rviz_config.rviz"/>
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" /> -->
+    <arg name="rvizconfig" default="$(find atrvjr_description)/launch/new_rviz_config.rviz"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+
+    <node name="moveit_commander" pkg="moveit_commander" type="moveit_commander_cmdline.py" output="screen"/>
 
   </group>
 

@@ -71,7 +71,7 @@ class node():
 
 def main():
 
-    rospy.init_node('ur5_magnetic_gripper')
+    rospy.init_node('fake_brick_pose_node')
     n = node()
     rospy.spin()
 

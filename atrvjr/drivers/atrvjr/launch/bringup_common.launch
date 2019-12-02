@@ -10,6 +10,8 @@
     <include file="$(find atrv_pregrasp_planning)/ros/launch/pregrasp_planner.launch"/>
 
     <include file="$(find husky_navigation)/launch/move_base_mapless_demo.launch"/>
+    <!-- <include file="$(find laser_line_extraction)/launch/example.launch"/> -->
+
 
 
 </launch>
