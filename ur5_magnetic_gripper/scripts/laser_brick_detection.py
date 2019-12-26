@@ -44,17 +44,54 @@ class line_node():
 
 		print self.angle_goal
 
-	lowest = 999 #random big number
-	line_populated = False
+	else:
 
-	vel_msg=geometry_msgs.msg.Twist()
+		lowest = 999 #random big number
+		line_populated = False
+		vel_msg=geometry_msgs.msg.Twist()
 
-	for line in self.line_segs:
+		for line in self.line_segs:
 
-		if line.radius<3:
+			if line.radius<3:
 
-			start = line.start   #start e o ponto mais a esquerda
-			end = line.end     #end e o ponto mais a direita
+				start = line.start   #start e o ponto mais a esquerda
+				end = line.end     #end e o ponto mais a direita
+				
+				diff_x=abs(start[0]-end[0])
+				diff_y=abs(start[1]-end[1])
+
+				middle_point_x=(start[0]+end[0])/2
+				middle_point_y=-(start[1]+end[1])/2 #aqui esta menos pq o frame do hokuyo esta invertido
+
+				distance_middle_point = numpy.sqrt(middle_point_x**2 + middle_point_y**2)
+
+				print "ANGULO", line.angle
+
+
+				try:
+
+					if distance_middle_point < lowest and self.angle_commited-0.05 <= abs(line.angle) <= self.angle_commited+0.05:
+
+						print "COMMITED", self.angle_commited
+
+						lowest = distance_middle_point
+						chosen_line = line
+						line_populated = True
+				except:
+					print "foi para o except pq nao tem angle_commited"
+
+					if distance_middle_point < lowest:
+
+						lowest = distance_middle_point
+						chosen_line = line
+						line_populated = True
+
+		print "lowest", lowest
+
+		if line_populated:
+
+			start = chosen_line.start   #start e o ponto mais a esquerda
+			end = chosen_line.end     #end e o ponto mais a direita
 			
 			diff_x=abs(start[0]-end[0])
 			diff_y=abs(start[1]-end[1])
@@ -62,43 +99,22 @@ class line_node():
 			middle_point_x=(start[0]+end[0])/2
 			middle_point_y=-(start[1]+end[1])/2 #aqui esta menos pq o frame do hokuyo esta invertido
 
-			distance_middle_point = numpy.sqrt(middle_point_x**2 + middle_point_y**2)
+			point_value_y = -(start[1] - self.brick_to_be_placed/2)  
 
-			if distance_middle_point < lowest:
+			print "X", middle_point_x, "Y", middle_point_y
 
-				lowest = distance_middle_point
-				chosen_line = line
-				line_populated = True
+			length = numpy.sqrt(diff_x**2 + diff_y**2)
 
-	print "lowest", lowest
+			print "length", length
+			print "line radius", chosen_line.radius
+			print "line angle", chosen_line.angle
 
-	if line_populated:
+		else:
 
-		start = chosen_line.start   #start e o ponto mais a esquerda
-		end = chosen_line.end     #end e o ponto mais a direita
-		
-		diff_x=abs(start[0]-end[0])
-		diff_y=abs(start[1]-end[1])
+			print "line not populated"
+			self.flag = 6
 
-		middle_point_x=(start[0]+end[0])/2
-		middle_point_y=-(start[1]+end[1])/2 #aqui esta menos pq o frame do hokuyo esta invertido
-
-		point_value_y = -(start[1] - self.brick_to_be_placed/2)  
-
-		print "X", middle_point_x, "Y", middle_point_y, "point_value_y", point_value_y
-
-		length = numpy.sqrt(diff_x**2 + diff_y**2)
-
-		print "length", length
-		print "line radius", chosen_line.radius
-		print "line angle", chosen_line.angle
-	
-	else:
-
-		print "line not populated"
-		self.flag = 6
-
-	print self.flag
+		print "FLAG", self.flag
 
 	if self.flag == 0:
 
@@ -132,13 +148,16 @@ class line_node():
 		if chosen_line.angle > self.angle_goal:
 			vel_msg.linear.x = 0
 			vel_msg.angular.z = -0.15
+			self.angle_commited= abs(chosen_line.angle)
 		if chosen_line.angle < self.angle_goal:
 			vel_msg.linear.x = 0
 			vel_msg.angular.z = 0.15
+			self.angle_commited= abs(chosen_line.angle)
 		if abs(chosen_line.angle)>abs(self.angle_goal)-0.03: #este 0.03 depende da vel.angular
 			vel_msg.linear.x = 0
 			vel_msg.angular.z = 0
 			self.flag=3
+			self.angle_commited= abs(chosen_line.angle)
 
 		self.cmd_vel_pub.publish(vel_msg)
 
@@ -146,9 +165,13 @@ class line_node():
 
 		vel_msg.linear.x = 0.2
 
-		if chosen_line.radius < 0.3 + abs(self.angle_goal)/8:
+		print 0.3 + abs(self.angle_goal)/8
+
+		if chosen_line.radius < 0.3 + abs(self.angle_goal)/10:
 			vel_msg.linear.x = 0
 			self.flag = 4
+			self.angle_commited= None
+
 
 		self.cmd_vel_pub.publish(vel_msg)
 
@@ -182,7 +205,7 @@ class line_node():
 			vel_msg.linear.x = 0
 			self.cmd_vel_pub.publish(vel_msg)
 
-	print "acabou o ciclo forrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+	print "-------------------------------------------------------------------------------------"
 
 def main():
 
