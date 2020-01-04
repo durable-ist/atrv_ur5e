@@ -22,8 +22,10 @@ class line_node():
         self.sub = rospy.Subscriber('/line_segments', laser_line_extraction.msg.LineSegmentList, self.line_segments_cb)
 
         self.cmd_vel_pub = rospy.Publisher("/mbzirc2020_0/base_controller/cmd_vel", geometry_msgs.msg.Twist, queue_size=1)
+
+        self.goal_pose_pub = rospy.Publisher("/mbzirc2020_0/laser_brick_detection/goal_pose", geometry_msgs.msg.PoseStamped, queue_size=1)
         
-        self.flag=0
+        self.flag=1
 
         self.approach_wall = True
         self.counter = 0
@@ -50,6 +52,16 @@ class line_node():
 		line_populated = False
 		vel_msg=geometry_msgs.msg.Twist()
 
+		goal_pose=geometry_msgs.msg.PoseStamped()
+
+		goal_pose.header.stamp=rospy.Time.now()
+		goal_pose.header.frame_id = "hokuyo"
+		goal_pose.pose.position.z= 0
+		goal_pose.pose.orientation.x= 0
+		goal_pose.pose.orientation.y= 0
+		goal_pose.pose.orientation.z= 0
+		goal_pose.pose.orientation.w= 1
+
 		for line in self.line_segs:
 
 			if line.radius<3:
@@ -61,7 +73,7 @@ class line_node():
 				diff_y=abs(start[1]-end[1])
 
 				middle_point_x=(start[0]+end[0])/2
-				middle_point_y=-(start[1]+end[1])/2 #aqui esta menos pq o frame do hokuyo esta invertido
+				middle_point_y=(start[1]+end[1])/2 #aqui esta menos pq o frame do hokuyo esta invertido
 
 				distance_middle_point = numpy.sqrt(middle_point_x**2 + middle_point_y**2)
 
@@ -95,16 +107,22 @@ class line_node():
 			
 			diff_x=abs(start[0]-end[0])
 			diff_y=abs(start[1]-end[1])
+			length = numpy.sqrt(diff_x**2 + diff_y**2)
+			length=1
 
 			middle_point_x=(start[0]+end[0])/2
-			middle_point_y=-(start[1]+end[1])/2 #aqui esta menos pq o frame do hokuyo esta invertido
+			middle_point_y=(start[1]+end[1])/2 #aqui esta menos pq o frame do hokuyo esta invertido
+
+			# diff_x_mid= abs(start[0]-middle_point_x)
+			# diff_y_mid= abs(start[1]-middle_point_y)
+			# length_mid = numpy.sqrt(diff_x_mid**2 + diff_y_mid**2)
+
+			# goal_point_x= middle_point_x + (0.25*(start[1]-middle_point_y))/(length/2)
+			# goal_point_y= middle_point_y + (0.25*(middle_point_x-start[0]))/(length/2)
 
 			point_value_y = -(start[1] - self.brick_to_be_placed/2)  
 
 			print "X", middle_point_x, "Y", middle_point_y
-
-			length = numpy.sqrt(diff_x**2 + diff_y**2)
-
 			print "length", length
 			print "line radius", chosen_line.radius
 			print "line angle", chosen_line.angle
@@ -114,34 +132,51 @@ class line_node():
 			print "line not populated"
 			self.flag = 6
 
-		print "FLAG", self.flag
+	print "FLAG", self.flag
 
-	if self.flag == 0:
+	# if self.flag == 0:
 
-		if chosen_line.angle < - 0.02:
-			vel_msg.linear.x = 0
-			vel_msg.angular.z = 0.15
-		if chosen_line.angle > 0.02:
-			vel_msg.linear.x = 0
-			vel_msg.angular.z = -0.15
-		if chosen_line.angle > -0.02 and chosen_line.angle<0.02:
-			vel_msg.linear.x = 0
-			vel_msg.angular.z = 0
-			self.flag= 1
+	# 	if chosen_line.angle < - 0.02:
+	# 		vel_msg.linear.x = 0
+	# 		vel_msg.angular.z = 0.15
+	# 	if chosen_line.angle > 0.02:
+	# 		vel_msg.linear.x = 0
+	# 		vel_msg.angular.z = -0.15
+	# 	if chosen_line.angle > -0.02 and chosen_line.angle<0.02:
+	# 		vel_msg.linear.x = 0
+	# 		vel_msg.angular.z = 0
+	# 		self.flag= 1
 
-		self.cmd_vel_pub.publish(vel_msg)
+	# 	self.cmd_vel_pub.publish(vel_msg)
 
 	if self.flag == 1:
 
-		diff_angle = math.atan2(middle_point_y,middle_point_x-0.25)
+		vector_y=middle_point_x - start[0]
+		vector_x=middle_point_y - start[1]
 
+		if vector_x > 0:
+			vector_x = -vector_x
+		# if vector_x < 0:
+		# 	vector_y = -vector_y
+
+		print middle_point_x + vector_x/2
+		print middle_point_y + vector_y/2
+
+
+		diff_angle = math.atan2(middle_point_y + vector_y*(0.25/0.5), middle_point_x + vector_x*(0.25/0.5))  #AQUI JA NAO PODE SER SO EM X
+
+		goal_pose.pose.position.y=middle_point_y + vector_y*(0.25/0.5)
+		goal_pose.pose.position.x=middle_point_x + vector_x*(0.25/0.5)
+
+		self.goal_pose_pub.publish(goal_pose)
 		# diff_angle = math.atan2(point_value_y,middle_point_x-0.3)    #0.2 para ficar 20cm
-
-		self.angle_goal = diff_angle
+		
+		self.angle_goal = - diff_angle + chosen_line.angle
 		print "angle goal", self.angle_goal
-
-		rospy.sleep(1)
+	
 		self.flag=2
+		rospy.sleep(1)
+		
 
 	if self.flag == 2:
 
@@ -153,7 +188,7 @@ class line_node():
 			vel_msg.linear.x = 0
 			vel_msg.angular.z = 0.15
 			self.angle_commited= abs(chosen_line.angle)
-		if abs(chosen_line.angle)>abs(self.angle_goal)-0.03: #este 0.03 depende da vel.angular
+		if chosen_line.angle>self.angle_goal-0.03 and chosen_line.angle<self.angle_goal+0.03: #este 0.03 depende da vel.angular
 			vel_msg.linear.x = 0
 			vel_msg.angular.z = 0
 			self.flag=3
@@ -165,9 +200,7 @@ class line_node():
 
 		vel_msg.linear.x = 0.2
 
-		print 0.3 + abs(self.angle_goal)/8
-
-		if chosen_line.radius < 0.3 + abs(self.angle_goal)/10:
+		if chosen_line.radius < 0.3 + abs(chosen_line.angle)/10:
 			vel_msg.linear.x = 0
 			self.flag = 4
 			self.angle_commited= None
