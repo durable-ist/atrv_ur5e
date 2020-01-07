@@ -16,7 +16,7 @@ import geometry_msgs.msg
 
 class line_node():
 
-    def __init__(self):
+    def __init__(self, reference_side, approach_wall, distance_to_place, brick_to_be_placed):
 
        # self.pub = rospy.Publisher('attached', GripperAttached, queue_size=1)
         self.sub = rospy.Subscriber('/line_segments', laser_line_extraction.msg.LineSegmentList, self.line_segments_cb)
@@ -25,15 +25,18 @@ class line_node():
 
         self.goal_pose_pub = rospy.Publisher("/mbzirc2020_0/laser_brick_detection/goal_pose", geometry_msgs.msg.PoseStamped, queue_size=1)
 
-        self.approach_wall = True
+        self.approach_wall = approach_wall
 
         if self.approach_wall:
         	self.flag=0
         else:
         	self.flag=1
 
-        
-        self.brick_to_be_placed =1.2
+        self.brick_to_be_placed = brick_to_be_placed
+
+        self.reference_side = reference_side
+
+        self.distance_to_place= distance_to_place
    
         self.counter = 0
 
@@ -48,7 +51,7 @@ class line_node():
 
 		vel_msg=geometry_msgs.msg.Twist()
 
-		if len(self.line_segs) == 0 or self.line_segs[0].radius <0.3:
+		if len(self.line_segs) == 0 or self.line_segs[0].radius <0.25 and self.approach_wall:
 
 
 			print "line segments list is EMPTY or line is super close"
@@ -172,7 +175,12 @@ class line_node():
 			print middle_point_x + vector_x/2
 			print middle_point_y + vector_y/2
 
-			point_value_y =-(end[1] + self.brick_to_be_placed/2) #manter approach anterior para a wall
+			if self.reference_side == "left":
+				side = start[1]
+			else: 
+				side = end[1]
+
+			point_value_y =-(side + self.distance_to_place + self.brick_to_be_placed/2) #manter approach anterior para a wall
 
 			if self.approach_wall:
 				diff_angle = math.atan2(point_value_y, middle_point_x - 0.25)
@@ -216,7 +224,12 @@ class line_node():
 
 			vel_msg.linear.x = 0.2
 
-			if chosen_line.radius < (0.25 + abs(chosen_line.angle)/12):
+			if self.approach_wall:
+				stop = 0.3
+			else:
+				stop = 0.25
+
+			if chosen_line.radius < (stop + abs(chosen_line.angle)/12):
 				vel_msg.linear.x = 0
 				self.flag = 4
 				self.angle_commited= None
@@ -249,7 +262,7 @@ class line_node():
 			print "Counter", self.counter
 			print "Angle goal", self.angle_goal
 
-			if self.counter > 1.5*abs(self.angle_goal) * 0.5*self.condition_stop *self.brick_to_be_placed:
+			if self.counter > abs(self.angle_goal) * self.condition_stop * abs(self.brick_to_be_placed):
 				#quanto mais pequeno o angle_goal mais cedo deve parar
 				try:
 					if self.line_segs[0].radius< 0.3:
@@ -275,7 +288,7 @@ class line_node():
 def main():
 
     rospy.init_node('laser_brick_detection')
-    n = line_node()
+    n = line_node("left", False, 1.9, 0.6)
     rospy.spin()
 
 if __name__ == '__main__':
