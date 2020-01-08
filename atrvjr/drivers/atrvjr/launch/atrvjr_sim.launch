@@ -10,7 +10,8 @@
     
     <!--<include file="$(find gazebo_ros)/launch/empty_world.launch">
       <arg name="world_name" default="worlds/empty.world"/>
-      <arg name="world_name" value="$(find gazebo_ros_link_attacher)/worlds/test_attacher.world"/>     
+      <arg name="world_name" value="$(find gazebo_ros_link_attacher)/worlds/test_attacher.world"/>
+      <arg name="world_name" default="$(find atrvjr_description)/worlds/ch3world.world"/>     
       <arg name="paused" value="$(arg paused)"/>
       <arg name="gui" value="$(arg gui)"/>
     </include>-->
