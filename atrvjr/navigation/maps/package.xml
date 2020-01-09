@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package>
+ <name>maps</name>
+ <version>1.0.0</version>
+ <description>
+    Data about the environment: maps, waypoints, ...
+ </description>
+
+ <license>GPLv3</license>
+
+ <author email="rui.bettencourt@tecnico.ulisboa.pt">Rui Bettencourt</author>
+ <maintainer email="rui.bettencourt@tecnico.ulisboa.pt">Rui Bettencourt</maintainer>
+
+ <buildtool_depend>catkin</buildtool_depend>
+
+ <build_depend>rospy</build_depend>
+ <build_depend>rospkg</build_depend>
+ <build_depend>std_msgs</build_depend>
+
+ <run_depend>rospy</run_depend>
+ <run_depend>rospkg</run_depend>
+ <run_depend>std_msgs</run_depend>
+
+</package>

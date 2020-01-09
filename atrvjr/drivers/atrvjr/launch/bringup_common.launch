@@ -3,13 +3,23 @@
 <launch>
    
 <!-- POR AQUI TAMBEM O ROBOT LOCALIZATION?????-->    
-
-
+    <arg name="load_map" default="false"/>
+    <arg name="map" default="ch3_sim"/>
+    <arg name="robot_env" default="$(arg map)"/>
 
     <include file="$(find ur5_e_moveit_config_joao)/launch/move_group.launch"/>
     <include file="$(find atrv_pregrasp_planning)/ros/launch/pregrasp_planner.launch"/>
 
-    <include file="$(find husky_navigation)/launch/move_base_mapless_demo.launch"/>
+    <group if="$(arg load_map)">
+        <include file="$(find husky_navigation)/launch/move_base.launch">
+            <arg name="robot_env" default="$(arg robot_env)"/>
+        </include>
+    </group>
+
+    <group unless="$(arg load_map)">
+        <include file="$(find husky_navigation)/launch/move_base_mapless_demo.launch" />
+    </group>
+
     <!-- <include file="$(find laser_line_extraction)/launch/example.launch"/> -->
 
 

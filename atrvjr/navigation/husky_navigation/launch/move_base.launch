@@ -27,6 +27,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 
   <arg name="no_static_map" default="false"/>
 
+  <arg name="robot_env" default="ch3_sim"/>
+
   <arg name="base_global_planner" default="navfn/NavfnROS"/> 
 
 <!--   <arg name="base_global_planner" default="carrot_planner/CarrotPlanner"/>
@@ -66,5 +68,11 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 
 
   </node>
+
+  <!-- map server -->
+  <group unless="$(arg no_static_map)">
+    <arg name="map" default="$(find maps)/maps/$(arg robot_env)/map.yaml" />
+    <node pkg="map_server" name="map_server" type="map_server" args="$(arg map)" />
+  </group>
 
 </launch>
