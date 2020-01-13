@@ -8,15 +8,10 @@ import math
 import geometry_msgs.msg
 
 
-#INPUTS
-# brick_to_be_placed (0.1 for pick)
-# diff_angle (point_value_y for placing on the side; change the value at the end for increasing/decreasing distance to line)
-# self.condition_stop (for stoping when no line)
-
 
 class line_node():
 
-    def __init__(self, reference_side, approach_wall, distance_to_place, brick_to_be_placed):
+    def __init__(self, reference_side, approach_wall, distance_to_place, brick):
 
        # self.pub = rospy.Publisher('attached', GripperAttached, queue_size=1)
         self.sub = rospy.Subscriber('/line_segments', laser_line_extraction.msg.LineSegmentList, self.line_segments_cb)
@@ -32,7 +27,7 @@ class line_node():
         else:
         	self.flag=1
 
-        self.brick_to_be_placed = brick_to_be_placed
+        self.brick = brick
 
         self.reference_side = reference_side
 
@@ -53,16 +48,13 @@ class line_node():
 
 		if len(self.line_segs) == 0 or self.line_segs[0].radius <0.25 and self.approach_wall:
 
-
 			print "line segments list is EMPTY or line is super close"
-
 
 			self.flag = 6
 
 			print self.angle_goal
 
 		else:
-
 
 			lowest = 999 #random big number
 			line_populated = False
@@ -86,31 +78,35 @@ class line_node():
 					
 					diff_x=abs(start[0]-end[0])
 					diff_y=abs(start[1]-end[1])
+					length = numpy.sqrt(diff_x**2 + diff_y**2)
+					print "length", length
 
-					middle_point_x=(start[0]+end[0])/2
-					middle_point_y=(start[1]+end[1])/2   #aqui estava menos pq o frame do hokuyo esta invertido
+					if length <= self.brick+0.05:
 
-					distance_middle_point = numpy.sqrt(middle_point_x**2 + middle_point_y**2)
+						middle_point_x=(start[0]+end[0])/2
+						middle_point_y=(start[1]+end[1])/2   #aqui estava menos pq o frame do hokuyo esta invertido
 
-					print "ANGULO", line.angle
+						distance_middle_point = numpy.sqrt(middle_point_x**2 + middle_point_y**2)
 
-					try:
+						print "ANGULO", line.angle
 
-						if distance_middle_point < lowest and self.angle_commited-0.05 <= abs(line.angle) <= self.angle_commited+0.05:
+						try:
 
-							print "COMMITED", self.angle_commited
+							if distance_middle_point < lowest and self.angle_commited-0.05 <= abs(line.angle) <= self.angle_commited+0.05:
 
-							lowest = distance_middle_point
-							chosen_line = line
-							line_populated = True
-					except:
-						print "foi para o except pq nao tem angle_commited"
+								print "COMMITED", self.angle_commited
 
-						if distance_middle_point < lowest:
+								lowest = distance_middle_point
+								chosen_line = line
+								line_populated = True
+						except:
+							print "foi para o except pq nao tem angle_commited"
 
-							lowest = distance_middle_point
-							chosen_line = line
-							line_populated = True
+							if distance_middle_point < lowest:
+
+								lowest = distance_middle_point
+								chosen_line = line
+								line_populated = True
 
 			print "lowest", lowest
 
@@ -126,17 +122,8 @@ class line_node():
 				middle_point_x=(start[0]+end[0])/2
 				middle_point_y=(start[1]+end[1])/2  #aqui esta menos pq o frame do hokuyo esta invertido
 
-				# diff_x_mid= abs(start[0]-middle_point_x)
-				# diff_y_mid= abs(start[1]-middle_point_y)
-				# length_mid = numpy.sqrt(diff_x_mid**2 + diff_y_mid**2)
-
-				# goal_point_x= middle_point_x + (0.25*(start[1]-middle_point_y))/(length/2)
-				# goal_point_y= middle_point_y + (0.25*(middle_point_x-start[0]))/(length/2)
-
-				#point_value_y =(start[1] - self.brick_to_be_placed/2)  
-
 				print "X", middle_point_x, "Y", middle_point_y
-				print "length", length
+				
 				print "line radius", chosen_line.radius
 				print "line angle", chosen_line.angle
 
@@ -180,7 +167,7 @@ class line_node():
 			else: 
 				side = end[1]
 
-			point_value_y =-(side + self.distance_to_place + self.brick_to_be_placed/2) #manter approach anterior para a wall
+			point_value_y =-(side + self.distance_to_place + self.brick/2) #manter approach anterior para a wall
 
 			if self.approach_wall:
 				diff_angle = math.atan2(point_value_y, middle_point_x - 0.25)
@@ -190,12 +177,6 @@ class line_node():
 				diff_angle = math.atan2(middle_point_y + vector_y*(0.3/(length/2)), middle_point_x + vector_x*(0.3/(length/2)))
 				self.angle_goal = - diff_angle + chosen_line.angle
 
-			# goal_pose.pose.position.y=middle_point_y + vector_y*(0.25/0.5)
-			# goal_pose.pose.position.x=middle_point_x + vector_x*(0.25/0.5)
-
-			# self.goal_pose_pub.publish(goal_pose)
-			# diff_angle = math.atan2(point_value_y,middle_point_x-0.3)    #0.2 para ficar 20cm
-			
 			print "angle goal", self.angle_goal
 		
 			self.flag=2
@@ -252,7 +233,7 @@ class line_node():
 
 			self.cmd_vel_pub.publish(vel_msg)
 
-		if self.flag == 6 and self.approach_wall:
+		if self.flag == 6:
 
 			self.counter=self.counter+1
 
@@ -262,7 +243,7 @@ class line_node():
 			print "Counter", self.counter
 			print "Angle goal", self.angle_goal
 
-			if self.counter > abs(self.angle_goal) * self.condition_stop * abs(self.brick_to_be_placed):
+			if self.counter > abs(self.angle_goal) * self.condition_stop * abs(self.brick):
 				#quanto mais pequeno o angle_goal mais cedo deve parar
 				try:
 					if self.line_segs[0].radius< 0.3:
@@ -288,7 +269,7 @@ class line_node():
 def main():
 
     rospy.init_node('laser_brick_detection')
-    n = line_node("left", False, 1.9, 0.6)
+    n = line_node("left", False, 1.9, 1)
     rospy.spin()
 
 if __name__ == '__main__':
