@@ -3,6 +3,7 @@
 
     <arg name="paused" default="false" doc="Starts gazebo in paused mode" />
     <arg name="gui" default="true" doc="Starts gazebo gui" />
+    <arg name="rviz" default="true" doc="Starts rviz gui"/>
     <arg name="load_map" default="false"/>
     <arg name="map" default="ch3_sim"/>
 
@@ -10,13 +11,13 @@
     <include file="$(find challenge_worlds)/launch/challenge2.launch"/>
 
     
-    <!--<include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <!-- <include file="$(find gazebo_ros)/launch/empty_world.launch">
       <arg name="world_name" default="worlds/empty.world"/>
       <arg name="world_name" value="$(find gazebo_ros_link_attacher)/worlds/test_attacher.world"/>
       <arg name="world_name" default="$(find atrvjr_description)/worlds/ch3world.world"/>     
       <arg name="paused" value="$(arg paused)"/>
       <arg name="gui" value="$(arg gui)"/>
-    </include>-->
+    </include> -->
 
 
   <group ns="mbzirc2020_0"> 
@@ -33,7 +34,11 @@
 
     <include file="$(find ur_e_gazebo)/launch/controller_utils.launch"/>
 
-    <include file="$(find robot_localization)/launch/ekf_template.launch" />
+    <include file="$(find husky_navigation)/launch/amcl.launch" if="$(arg load_map)"/>
+
+    <include file="$(find robot_localization)/launch/ekf_template.launch">
+      <arg name="load_map" default="$(arg load_map)"/>
+    </include>
 
     <include file="$(find robot_localization)/launch/navsat_transform_template.launch" />
 
@@ -47,7 +52,8 @@
 
 
     <arg name="rvizconfig" default="$(find atrvjr_description)/launch/new_rviz_config.rviz"/>
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+    <!-- <arg name="rvizconfig" default="$(find atrvjr_description)/launch/map_config.rviz"/> -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" if="$(arg rviz)"/>
 
     <node name="moveit_commander" pkg="moveit_commander" type="moveit_commander_cmdline.py" output="screen"/>
 

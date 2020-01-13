@@ -45,8 +45,10 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
     <rosparam file="$(find husky_navigation)/config/planner.yaml" command="load"/>
 
     <!-- observation sources located in costmap_common.yaml -->
-    <rosparam file="$(find husky_navigation)/config/costmap_common.yaml" command="load" ns="global_costmap" />
-    <rosparam file="$(find husky_navigation)/config/costmap_common.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find husky_navigation)/config/costmap_common.yaml" command="load" ns="global_costmap" if="$(arg no_static_map)"/>
+    <rosparam file="$(find husky_navigation)/config/costmap_common.yaml" command="load" ns="local_costmap" if="$(arg no_static_map)"/>
+    <rosparam file="$(find husky_navigation)/config/costmap_common_static.yaml" command="load" ns="global_costmap" unless="$(arg no_static_map)"/>
+    <rosparam file="$(find husky_navigation)/config/costmap_common_static.yaml" command="load" ns="local_costmap" unless="$(arg no_static_map)"/>
 
     <!-- local costmap, needs size -->
     <rosparam file="$(find husky_navigation)/config/costmap_local.yaml" command="load" ns="local_costmap" />
@@ -61,10 +63,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
     <param name="global_costmap/width" value="100.0" if="$(arg no_static_map)"/>
     <param name="global_costmap/height" value="100.0" if="$(arg no_static_map)"/>
 
-    <!-- <remap from="/cmd_vel" to="/rflex/atrvjr_node/cmd_vel"/> -->
-
     <remap from="cmd_vel" to="/mbzirc2020_0/base_controller/cmd_vel"/>
-    <remap from="odom" to="/mbzirc2020_0/odometry/filtered"/>
+    <!-- TO DO - check if odom works better than filtered or not -->
+    <!-- <remap from="odom" to="/mbzirc2020_0/odometry/filtered"/> -->
 
 
   </node>
