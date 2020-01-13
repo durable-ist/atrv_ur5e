@@ -1,0 +1,6 @@
+#!/usr/bin/env python
+
+import maps_ros.maps_node
+
+if __name__ == '__main__':
+ maps_ros.maps_node.main()
