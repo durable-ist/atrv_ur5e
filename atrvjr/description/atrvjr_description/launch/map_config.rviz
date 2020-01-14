@@ -364,16 +364,10 @@ Visualization Manager:
           Value: false
         ee_link:
           Value: true
-        forearm_link:
-          Value: false
         front_left_static:
           Value: false
-        front_left_wheel_link:
-          Value: true
         front_right_static:
           Value: false
-        front_right_wheel_link:
-          Value: true
         hokuyo:
           Value: false
         map:
@@ -386,19 +380,9 @@ Visualization Manager:
           Value: true
         rear_left_static:
           Value: false
-        rear_left_wheel_link:
-          Value: true
         rear_right_static:
           Value: false
-        rear_right_wheel_link:
-          Value: true
-        shoulder_link:
-          Value: false
         tool0:
-          Value: false
-        upper_arm_link:
-          Value: false
-        wrist_1_link:
           Value: false
         wrist_2_link:
           Value: true
@@ -415,40 +399,15 @@ Visualization Manager:
             base_link:
               arm_base_frame:
                 arm_base_link:
-                  shoulder_link:
-                    upper_arm_link:
-                      forearm_link:
-                        wrist_1_link:
-                          wrist_2_link:
-                            camera_bottom_screw_frame:
-                              camera_link:
-                                camera_depth_frame:
-                                  camera_color_frame:
-                                    camera_color_optical_frame:
-                                      {}
-                                  camera_depth_optical_frame:
-                                    {}
-                                  camera_left_ir_frame:
-                                    camera_left_ir_optical_frame:
-                                      {}
-                                  camera_right_ir_frame:
-                                    camera_right_ir_optical_frame:
-                                      {}
-                            wrist_3_link:
-                              ee_link:
-                                {}
-                              tool0:
-                                {}
+                  {}
               cbimu_frame:
                 {}
               center_link:
                 {}
               front_left_static:
-                front_left_wheel_link:
-                  {}
+                {}
               front_right_static:
-                front_right_wheel_link:
-                  {}
+                {}
               hokuyo:
                 {}
               mpuimu_frame:
@@ -456,11 +415,9 @@ Visualization Manager:
               novatel:
                 {}
               rear_left_static:
-                rear_left_wheel_link:
-                  {}
+                {}
               rear_right_static:
-                rear_right_wheel_link:
-                  {}
+                {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -624,6 +581,14 @@ Visualization Manager:
       Unreliable: false
       Use Timestamp: false
       Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /visualization_marker_array
+      Name: Navigation Goals
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -649,7 +614,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 19.5493546
+      Distance: 9.59509468
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1

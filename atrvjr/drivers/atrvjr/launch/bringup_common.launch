@@ -14,6 +14,11 @@
         <include file="$(find husky_navigation)/launch/move_base.launch">
             <arg name="robot_env" default="$(arg robot_env)"/>
         </include>
+
+        <rosparam command="load" ns="/mbzirc2020_0/move_base/navigation_goals" file="$(find maps)/maps/$(arg robot_env)/navigation_goals.yaml"/>
+
+        <!-- visualize navigation goals -->
+        <node pkg="maps" type="navigation_goals_as_marker" name="navigation_goals_as_marker" ns="/mbzirc2020_0/move_base" output="screen"/>
     </group>
 
     <group unless="$(arg load_map)">
