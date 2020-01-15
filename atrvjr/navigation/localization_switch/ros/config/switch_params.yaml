@@ -1,0 +1,4 @@
+outdoors_topic:     /mbzirc2020_0/odometry/filtered
+indoors_topic:      /mbzirc2020_0/amcl_pose
+control_topic:      /mbzirc2020_0/switch_to
+pub_topic:          /mbzirc2020_0/final_pose

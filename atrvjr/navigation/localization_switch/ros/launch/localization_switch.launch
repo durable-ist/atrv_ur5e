@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+ 
+ <node pkg="localization_switch" type="switch_node" name="switch" respawn="false" output="screen">
+    <rosparam command="load" ns="/mbzirc2020_0/localization_switch/building_area" file="$(find localization_switch)/ros/config/switch_area.yaml"/>
+    <rosparam command="load" ns="/mbzirc2020_0/localization_switch/" file="$(find localization_switch)/ros/config/switch_params.yaml"/>
+ </node>
+
+</launch>

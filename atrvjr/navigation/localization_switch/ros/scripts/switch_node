@@ -1,0 +1,6 @@
+#!/usr/bin/env python
+
+import localization_switch_ros.switch
+
+if __name__ == '__main__':
+ localization_switch_ros.switch.main()
