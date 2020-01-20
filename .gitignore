@@ -12,3 +12,4 @@ manipulation/mir_pregrasp_planning/ros/src/mir_pregrasp_planning_ros/pregrasp_pl
 manipulation/mir_pregrasp_planning/ros/src/mir_pregrasp_planning_ros/simple_pregrasp_planner.pyc
 manipulation/mir_pregrasp_planning/ros/src/mir_pregrasp_planning_ros/simple_pregrasp_planner_utils.pyc
 *.pyc
+atrvjr/navigation/robot_localization/.vscode/
