@@ -11,6 +11,7 @@ import string
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from nav_msgs.msg import Odometry
 from std_msgs.msg import Bool, String
+import dynamic_reconfigure.client
 
 from rospy import loginfo as log
 
@@ -28,14 +29,17 @@ class Switch(object):
 		self.listener = tf.TransformListener()
 		self.broadcaster = tf.TransformBroadcaster()
 
+		ns = '/mbzirc2020_0/localization_switch/'
+
 		#Get outdoor and indoor topic names
-		self.outdoors_topic = rospy.get_param('/mbzirc2020_0/localization_switch/outdoors_topic')
-		self.indoors_topic = rospy.get_param('/mbzirc2020_0/localization_switch/indoors_topic')
-		self.control_topic = rospy.get_param('/mbzirc2020_0/localization_switch/control_topic')
-		self.pub_topic = rospy.get_param('/mbzirc2020_0/localization_switch/pub_topic')
-		self.origin_x = rospy.get_param('/mbzirc2020_0/localization_switch/origin_x')
-		self.origin_y = rospy.get_param('/mbzirc2020_0/localization_switch/origin_y')
-		self.origin_yaw = rospy.get_param('/mbzirc2020_0/localization_switch/origin_yaw')
+		self.outdoors_topic = rospy.get_param(ns + 'outdoors_topic')
+		self.indoors_topic = rospy.get_param(ns + 'indoors_topic')
+		self.control_topic = rospy.get_param(ns + 'control_topic')
+		self.pub_topic = rospy.get_param(ns + 'pub_topic')
+		self.origin_x = rospy.get_param(ns + 'origin_x')
+		self.origin_y = rospy.get_param(ns + 'origin_y')
+		self.origin_yaw = rospy.get_param(ns + 'origin_yaw')
+		self.amcl_enable_param = rospy.get_param(ns + 'amcl_enable_tf_param')
 
 		#Subscribe to indoors pose topic
 		self.sub_indoors_topic = rospy.Subscriber(self.indoors_topic, PoseWithCovarianceStamped , self.indoorsCallback)
@@ -47,7 +51,8 @@ class Switch(object):
 		self.sub_control = rospy.Subscriber(self.control_topic, String, self.controlCallback)
 
 	 	# #Topic to publish the pose you want to reach
-		self.pose_publisher = rospy.Publisher(self.pub_topic, PoseWithCovarianceStamped, queue_size=1)
+		self.pose_publisher = rospy.Publisher(self.pub_topic, PoseWithCovarianceStamped, queue_size=5)
+		self.amcl_switch_publisher = rospy.Publisher("mbzirc2020_0/localization_switch/amcl_broadcast", Bool, queue_size=1)
 		
 		# Initialize variables
 		self.indoors_sensor_reading = PoseWithYaw(None)
@@ -71,10 +76,14 @@ class Switch(object):
 			#Depending on what it is wanted the node will suply the pose of indoors nav or outdoors nav
 			if self.is_indoors:
 				if self.indoors_sensor_reading.raw is not None:
+					
+					log("I'm indoors, and raw has smthg")
+					# self.updateTFindoors(self.indoors_sensor_reading.raw)
 					self.pose_publisher.publish(self.indoors_sensor_reading.raw)
-					self.updateTFindoors(self.indoors_sensor_reading.raw)
 			else:
 				if self.outdoors_sensor_reading.raw is not None:
+					log("I'm outdoors, and raw has smthg")
+					self.updateTFoutdoors(self.outdoors_sensor_reading.raw)
 					self.pose_publisher.publish(self.outdoors_sensor_reading.raw)
 
 			self.rate.sleep()
@@ -86,21 +95,21 @@ class Switch(object):
 	#update the tf when the pose comes in relation to map
 	def updateTFindoors(self,raw):
 		try:
-			(trans_odom_base, rot_odom_base) = listener.lookupTransform('/base_link', '/odom', rospy.Time(0))
+			(trans_odom_base, rot_odom_base) = self.listener.lookupTransform('/base_link', '/odom', rospy.Time(0))
 		except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-			continue
+			log("Exception ocurred transforming from base_link to odom in localization switch updateTFindoors")
 
 		(trans_map_base, rot_map_base) = self.invertTF(
       									(raw.pose.pose.position.x,raw.pose.pose.position.y,0),
                							(raw.pose.pose.orientation.x,raw.pose.pose.orientation.y,raw.pose.pose.orientation.z,raw.pose.pose.orientation.w)
     				)
-		print(trans_odom_base, trans_map_base)
+		# print(trans_odom_base, trans_map_base)
 		trans_odom_map = trans_odom_base - trans_map_base
-		print(trans_odom_map)
+		# print(trans_odom_map)
   
 		#Convert the quaternions to yaws and subtract as well
-		yaw_odom_base = tf.transformations.euler_from_quaternion(self.quaternionToArray(rot_odom_base))[2]
-		yaw_map_base = tf.transformations.euler_from_quaternion(self.quaternionToArray(rot_map_base))[2]
+		yaw_odom_base = tf.transformations.euler_from_quaternion(rot_odom_base)[2]
+		yaw_map_base = tf.transformations.euler_from_quaternion(rot_map_base)[2]
   
 		yaw_odom_map = yaw_map_base - yaw_odom_base #TO DOOOOOOOOOOOOOOOOOOO
   
@@ -113,12 +122,16 @@ class Switch(object):
 						"odom",
 						"map"
 					)
+
+	def enableAMCL(self, state):
+		rospy.set_param(self.amcl_enable_param, state)
+		
   
 	###TODO: Create updatetf from base_link to odom but also create a static transform from map to odom, map can be in odom? Otherwise we need to give the offset, introduce this param of the odom to map as a param
 	def updateTFoutdoors(self,raw):
 		self.broadcaster.sendTransform(
-						(self.origin.x, self.origin.y, 0.0),
-						tf.quaternion_from_euler(0,0,self.origin_yaw),
+						(self.origin_x, self.origin_y, 0.0),
+						tf.transformations.quaternion_from_euler(0,0,self.origin_yaw),
 						rospy.Time.now(),
 						"odom",
 						"map"
@@ -131,8 +144,6 @@ class Switch(object):
 						"base_link",
 						"odom"
 					)
-    
-    def multTF(self, )
   
 	#Invert a transform tf
 	def invertTF(self, trans, rot):
@@ -175,6 +186,7 @@ class Switch(object):
 		self.indoors_sensor_reading.x = data.pose.pose.position.x
 		self.indoors_sensor_reading.y = data.pose.pose.position.y
 		self.indoors_sensor_reading.yaw = tf.transformations.euler_from_quaternion(self.quaternionToArray(data.pose.pose.orientation))[2]
+		self.indoors_sensor_reading.raw = PoseWithCovarianceStamped()
 		self.indoors_sensor_reading.raw = data
 
 	#gets the pose from the outdoor pose estimator and saves it
@@ -182,13 +194,19 @@ class Switch(object):
 		self.outdoors_sensor_reading.x = data.pose.pose.position.x
 		self.outdoors_sensor_reading.y = data.pose.pose.position.y
 		self.outdoors_sensor_reading.yaw = tf.transformations.euler_from_quaternion(self.quaternionToArray(data.pose.pose.orientation))[2]
+		self.outdoors_sensor_reading.raw = PoseWithCovarianceStamped()
 		self.outdoors_sensor_reading.raw.header = data.header
 		self.outdoors_sensor_reading.raw.pose = data.pose
 
 	#gets a string that says if the robot is indoors or outdoors. If any other string is sent it will not change it status
 	def controlCallback(self, data):
 		self.is_indoors = self.controlSwitcher(data.data.lower(), self.is_indoors)
-
+		if self.is_indoors:
+			self.enableAMCL('true')
+			self.amcl_switch_publisher.publish(True)
+		else:
+			self.enableAMCL('false')
+			self.amcl_switch_publisher.publish(False)
 	
 
 def main():

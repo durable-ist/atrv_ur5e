@@ -1,7 +1,8 @@
-outdoors_topic:     /mbzirc2020_0/odometry/filtered
-indoors_topic:      /mbzirc2020_0/amcl_pose
-control_topic:      /mbzirc2020_0/switch_to
-pub_topic:          /mbzirc2020_0/final_pose
-origin_x:           0.0
-origin_y:           0.0
-origin_yaw:         0.0
+outdoors_topic:       /mbzirc2020_0/odometry/filtered
+indoors_topic:        /mbzirc2020_0/amcl_pose
+control_topic:        /mbzirc2020_0/switch_to
+pub_topic:            /mbzirc2020_0/final_pose
+amcl_enable_tf_param: /mbzirc2020_0/amcl/tf_broadcast
+origin_x:             0.0
+origin_y:             0.0
+origin_yaw:           0.0
