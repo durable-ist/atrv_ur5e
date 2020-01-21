@@ -182,6 +182,8 @@ class PlannedMotion(object):
 
             if move_status:
                 self.event_out.publish('e_success')
+                return move_status
+                
             else:
                 self.event_out.publish('e_failure')
 

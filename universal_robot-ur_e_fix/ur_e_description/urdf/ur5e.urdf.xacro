@@ -275,6 +275,21 @@
       </xacro:cylinder_inertial>
     </link>
 
+    <joint name="${prefix}cam_support_joint" type="fixed">
+      <parent link="${prefix}wrist_2_link" />
+      <child link = "${prefix}cam_support_link" />
+      <origin xyz="0.0 -0.05 0.2" rpy="0.0 0.0 0.0" />
+    </joint>
+
+    <link name="${prefix}cam_support_link">
+      <collision>
+        <geometry>
+          <box size="0.2 0.2 0.03"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+      </collision>
+    </link>
+
 
     <joint name="${prefix}wrist_3_joint" type="revolute">
       <parent link="${prefix}wrist_2_link" />
