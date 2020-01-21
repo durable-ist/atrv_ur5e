@@ -34,14 +34,6 @@
 
     <include file="$(find ur_e_gazebo)/launch/controller_utils.launch"/>
 
-    <include file="$(find husky_navigation)/launch/amcl.launch" if="$(arg load_map)"/>
-
-    <include file="$(find robot_localization)/launch/ekf_template.launch">
-      <arg name="load_map" default="$(arg load_map)"/>
-    </include>
-
-    <include file="$(find robot_localization)/launch/navsat_transform_template.launch" />
-
     <!-- Launch of the common components to sim and real life. 
     load_map: false for navigation without map and true to import a map
     map: defines the name of the map to be used -->
