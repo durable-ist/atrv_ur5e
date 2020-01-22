@@ -29,7 +29,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 
   <arg name="robot_env" default="ch3_sim"/>
 
-  <arg name="base_global_planner" default="navfn/NavfnROS"/> 
+  <arg name="base_global_planner" default="global_planner/GlobalPlanner"/> <!--"navfn/NavfnROS"/-->
 
 <!--   <arg name="base_global_planner" default="carrot_planner/CarrotPlanner"/>
  -->

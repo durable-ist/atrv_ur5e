@@ -4,11 +4,19 @@ recovery_behaviour_enabled: false
 
 #######################  GLOBAL  ######################################
 
-NavfnROS:
-  allow_unknown: true # Specifies whether or not to allow navfn to create plans that traverse unknown space.
-  default_tolerance: 0.15 # A tolerance on the goal point for the planner.
+# NavfnROS:
+#   allow_unknown: true # Specifies whether or not to allow navfn to create plans that traverse unknown space.
+#   default_tolerance: 0.15 # A tolerance on the goal point for the planner.
 
-
+GlobalPlanner:
+    use_grid_path: False
+    use_dijkstra: True
+    allow_unknown: True
+    default_tolerance: 0.0
+    visualize_potential: True
+    use_quadratic: True
+    use_grid_path: False
+    old_navfn_behavior: False
 
 
 ####################  LOCAL  #############################################

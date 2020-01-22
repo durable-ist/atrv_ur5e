@@ -1,11 +1,19 @@
 <?xml version="1.0"?>
 
 <launch>
-   
-<!-- POR AQUI TAMBEM O ROBOT LOCALIZATION?????-->    
     <arg name="load_map" default="false"/>
     <arg name="map" default="ch3_sim"/>
     <arg name="robot_env" default="$(arg map)"/>
+    <!-- ADD GROUP NS? -->
+    <include file="$(find husky_navigation)/launch/amcl.launch" if="$(arg load_map)"/>
+
+    <include file="$(find robot_localization)/launch/ekf_template.launch">
+      <arg name="load_map" default="$(arg load_map)"/>
+    </include>
+
+    <include file="$(find localization_switch)/ros/launch/localization_switch.launch" if="$(arg load_map)" />
+
+    <include file="$(find robot_localization)/launch/navsat_transform_template.launch" />
 
     <include file="$(find ur5_e_moveit_config_joao)/launch/move_group.launch"/>
     <include file="$(find atrv_pregrasp_planning)/ros/launch/pregrasp_planner.launch"/>
@@ -14,6 +22,11 @@
         <include file="$(find husky_navigation)/launch/move_base.launch">
             <arg name="robot_env" default="$(arg robot_env)"/>
         </include>
+
+        <rosparam command="load" ns="/mbzirc2020_0/move_base/navigation_goals" file="$(find maps)/maps/$(arg robot_env)/navigation_goals.yaml"/>
+
+        <!-- visualize navigation goals -->
+        <node pkg="maps" type="navigation_goals_as_marker" name="navigation_goals_as_marker" ns="/mbzirc2020_0/move_base" output="screen"/>
     </group>
 
     <group unless="$(arg load_map)">

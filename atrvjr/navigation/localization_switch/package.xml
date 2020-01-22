@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package>
+ <name>localization_switch</name>
+ <version>1.0.0</version>
+ <description>
+        Switches localization from robot_localization to amcl when the robot enters the area(s) defined in ros/config/switch_area.yaml
+ </description>
+
+ <license>GPLv3</license>
+
+ <author email="rui.bettencourt@tecnico.ulisboa.pt">Rui Bettencourt</author>
+ <maintainer email="rui.bettencourt@tecnico.ulisboa.pt">Rui Bettencourt</maintainer>
+
+ <buildtool_depend>catkin</buildtool_depend>
+
+ <build_depend>amcl</build_depend>
+ <build_depend>robot_localization</build_depend>
+ <build_depend>roslaunch</build_depend>
+ <build_depend>rospckg</build_depend>
+
+ <run_depend>amcl</run_depend>
+ <run_depend>robot_localization</run_depend>
+ <run_depend>rospckg</run_depend>
+
+</package>
