@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+
+    <include file="$(find atrvjr)/launch/atrv_sim.launch"/>
+
+    <!-- SMACH state machine node -->
+    <node pkg="planning" type="ch3_sm" name="ch3_sm_node" required="true" output="screen" />
+
+</launch>

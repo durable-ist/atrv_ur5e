@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package>
+ <name>planning</name>
+ <version>1.0.0</version>
+ <description>
+        Planning package
+ </description>
+
+ <license>GPLv3</license>
+
+ <author email="rui.bettencourt@tecnico.ulisboa.pt">Rui Bettencourt</author>
+ <maintainer email="rui.bettencourt@tecnico.ulisboa.pt">Rui Bettencourt</maintainer>
+
+ <buildtool_depend>catkin</buildtool_depend>
+
+ <build_depend>roslaunch</build_depend>
+ <build_depend>rospckg</build_depend>
+
+ <run_depend>rospckg</run_depend>
+
+</package>

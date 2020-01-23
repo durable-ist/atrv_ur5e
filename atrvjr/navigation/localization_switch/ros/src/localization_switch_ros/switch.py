@@ -70,19 +70,13 @@ class Switch(object):
 
 	def run(self):
 		
-		while not rospy.is_shutdown():
-			log("Doin ma thang")
-			
+		while not rospy.is_shutdown():	
 			#Depending on what it is wanted the node will suply the pose of indoors nav or outdoors nav
 			if self.is_indoors:
 				if self.indoors_sensor_reading.raw is not None:
-					
-					log("I'm indoors, and raw has smthg")
-					# self.updateTFindoors(self.indoors_sensor_reading.raw)
 					self.pose_publisher.publish(self.indoors_sensor_reading.raw)
 			else:
 				if self.outdoors_sensor_reading.raw is not None:
-					log("I'm outdoors, and raw has smthg")
 					self.updateTFoutdoors(self.outdoors_sensor_reading.raw)
 					self.pose_publisher.publish(self.outdoors_sensor_reading.raw)
 
@@ -93,41 +87,41 @@ class Switch(object):
 		return math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)) 
 
 	#update the tf when the pose comes in relation to map
-	def updateTFindoors(self,raw):
-		try:
-			(trans_odom_base, rot_odom_base) = self.listener.lookupTransform('/base_link', '/odom', rospy.Time(0))
-		except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-			log("Exception ocurred transforming from base_link to odom in localization switch updateTFindoors")
+	# def updateTFindoors(self,raw):
+	# 	try:
+	# 		(trans_odom_base, rot_odom_base) = self.listener.lookupTransform('/base_link', '/odom', rospy.Time(0))
+	# 	except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+	# 		log("Exception ocurred transforming from base_link to odom in localization switch updateTFindoors")
 
-		(trans_map_base, rot_map_base) = self.invertTF(
-      									(raw.pose.pose.position.x,raw.pose.pose.position.y,0),
-               							(raw.pose.pose.orientation.x,raw.pose.pose.orientation.y,raw.pose.pose.orientation.z,raw.pose.pose.orientation.w)
-    				)
-		# print(trans_odom_base, trans_map_base)
-		trans_odom_map = trans_odom_base - trans_map_base
-		# print(trans_odom_map)
+	# 	(trans_map_base, rot_map_base) = self.invertTF(
+    #   									(raw.pose.pose.position.x,raw.pose.pose.position.y,0),
+    #            							(raw.pose.pose.orientation.x,raw.pose.pose.orientation.y,raw.pose.pose.orientation.z,raw.pose.pose.orientation.w)
+    # 				)
+	# 	# print(trans_odom_base, trans_map_base)
+	# 	trans_odom_map = trans_odom_base - trans_map_base
+	# 	# print(trans_odom_map)
   
-		#Convert the quaternions to yaws and subtract as well
-		yaw_odom_base = tf.transformations.euler_from_quaternion(rot_odom_base)[2]
-		yaw_map_base = tf.transformations.euler_from_quaternion(rot_map_base)[2]
+	# 	#Convert the quaternions to yaws and subtract as well
+	# 	yaw_odom_base = tf.transformations.euler_from_quaternion(rot_odom_base)[2]
+	# 	yaw_map_base = tf.transformations.euler_from_quaternion(rot_map_base)[2]
   
-		yaw_odom_map = yaw_map_base - yaw_odom_base #TO DOOOOOOOOOOOOOOOOOOO
+	# 	yaw_odom_map = yaw_map_base - yaw_odom_base #TO DOOOOOOOOOOOOOOOOOOO
   
-		rot_odom_map = tf.transformations.quaternion_from_euler(0,0,yaw_odom_map)
+	# 	rot_odom_map = tf.transformations.quaternion_from_euler(0,0,yaw_odom_map)
   
-		self.broadcaster.sendTransform(
-						trans_odom_map,
-						rot_odom_map,
-						rospy.Time.now(),
-						"odom",
-						"map"
-					)
+	# 	self.broadcaster.sendTransform(
+	# 					trans_odom_map,
+	# 					rot_odom_map,
+	# 					rospy.Time.now(),
+	# 					"odom",
+	# 					"map"
+	# 				)
 
 	def enableAMCL(self, state):
 		rospy.set_param(self.amcl_enable_param, state)
 		
   
-	###TODO: Create updatetf from base_link to odom but also create a static transform from map to odom, map can be in odom? Otherwise we need to give the offset, introduce this param of the odom to map as a param
+	#Transforms the static transform from map to odom and forwards the result from ekf
 	def updateTFoutdoors(self,raw):
 		self.broadcaster.sendTransform(
 						(self.origin_x, self.origin_y, 0.0),

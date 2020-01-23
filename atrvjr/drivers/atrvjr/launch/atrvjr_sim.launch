@@ -23,7 +23,7 @@
   <group ns="mbzirc2020_0"> 
     
     <arg name="model" default="$(find ur_e_description)/urdf/ur5e_robot.urdf.xacro" />
-    <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)" />   
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model) use_nominal_extrinsics:=true" />
 
     <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model mbzirc2020_0 -z 0.1" respawn="false" output="screen" />
 
