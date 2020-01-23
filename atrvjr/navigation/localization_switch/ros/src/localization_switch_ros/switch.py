@@ -52,7 +52,7 @@ class Switch(object):
 
 	 	# #Topic to publish the pose you want to reach
 		self.pose_publisher = rospy.Publisher(self.pub_topic, PoseWithCovarianceStamped, queue_size=5)
-		self.amcl_switch_publisher = rospy.Publisher("mbzirc2020_0/localization_switch/amcl_broadcast", Bool, queue_size=1)
+		self.amcl_switch_publisher = rospy.Publisher(ns + "amcl_broadcast", Bool, queue_size=1)
 		
 		# Initialize variables
 		self.indoors_sensor_reading = PoseWithYaw(None)
@@ -117,8 +117,8 @@ class Switch(object):
 	# 					"map"
 	# 				)
 
-	def enableAMCL(self, state):
-		rospy.set_param(self.amcl_enable_param, state)
+	# def enableAMCL(self, state):
+	# 	rospy.set_param(self.amcl_enable_param, state)
 		
   
 	#Transforms the static transform from map to odom and forwards the result from ekf
@@ -196,10 +196,12 @@ class Switch(object):
 	def controlCallback(self, data):
 		self.is_indoors = self.controlSwitcher(data.data.lower(), self.is_indoors)
 		if self.is_indoors:
-			self.enableAMCL('true')
+			rospy.loginfo("[Localization_switch] switching to indoors")
+			# self.enableAMCL('true')
 			self.amcl_switch_publisher.publish(True)
 		else:
-			self.enableAMCL('false')
+			rospy.loginfo("[Localization_switch] switching to outdoors")
+			# self.enableAMCL('false')
 			self.amcl_switch_publisher.publish(False)
 	
 

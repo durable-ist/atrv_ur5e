@@ -8,9 +8,8 @@ import threading
 from smach import State,StateMachine
 
 #states & actions
-import ../../actions/navigation
-import ../../states/atrv_states
-
+import actions_ros.navigation as navigation
+import states_ros.atrv_states as atrv_states
 
 def ch3_sm():
 

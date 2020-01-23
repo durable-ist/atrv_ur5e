@@ -15,9 +15,11 @@ from geometry_msgs.msg import PoseWithCovarianceStamped, PointStamped, PoseStamp
 import os
 
 #import navigation actions
-import ../actions/navigation
+import actions_ros.navigation as navigation_file
 
-global fire_topic = '/depth_point'
+navigation = navigation_file.Navigation()
+
+fire_topic = '/depth_point'
 
 class ClearCostmaps(smach.State):
     '''

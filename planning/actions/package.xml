@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package>
+ <name>actions</name>
+ <version>1.0.0</version>
+ <description>
+    Actions
+ </description>
+
+ <license>GPLv3</license>
+
+ <author email="rui.bettencourt@tecnico.ulisboa.pt">Rui Bettencourt</author>
+ <maintainer email="rui.bettencourt@tecnico.ulisboa.pt">Rui Bettencourt</maintainer>
+
+ <buildtool_depend>catkin</buildtool_depend>
+ <buildtool_depend>smach</buildtool_depend>
+
+</package>

@@ -8,21 +8,24 @@ from geometry_msgs.msg import Twist, PoseStamped, PoseWithCovariance, PoseWithCo
 from std_msgs.msg import String, Header
 from std_srvs.srv import Empty
 from actionlib_msgs.msg import GoalID, GoalStatusArray, GoalStatus
+from move_base_msgs.msg import MoveBaseActionGoal
 
 from tf.transformations import quaternion_from_euler
+
+# seed the pseudorandom number generator
+from random import seed
+from random import random
 
 
 class Navigation(object):
     '''
     Wraps all methods related to navigation
     '''
-    def __init__(self, parent):
-        # connection to parent class
-        self.__parent = parent
+    def __init__(self):
         ns = '/mbzirc2020_0'
-        
+        seed(3)
         #Variables
-        self.__goals_status = GoalStatus()[]
+        self.__goals_status = []
 
         # services
         self.__global_localization_srv = rospy.ServiceProxy("/global_localization", Empty)
@@ -30,11 +33,12 @@ class Navigation(object):
         # publishers
         self.__switch_location = rospy.Publisher(ns + '/switch_to', String, queue_size=10)
         self.__move_base_pub = rospy.Publisher(ns + '/move_base_simple/goal', PoseStamped, queue_size = -1)
+        self.__move_base_safe_pub = rospy.Publisher(ns + '/move_base/goal', MoveBaseActionGoal, queue_size = -1)
         self.__cancel_pub = rospy.Publisher('move_base/cancel', GoalID, queue_size=2)
         self.__pose_pub = rospy.Publisher("/initialpose", PoseWithCovarianceStamped, queue_size=10)
 
         # subscribers
-        rospy.Subscriber('/move_base/status', GoalStatusArray, self.__callback_goal_status)
+        rospy.Subscriber(ns + '/move_base/status', GoalStatusArray, self.__callback_goal_status)
 
     def get_available_locations(self):
         '''
@@ -155,12 +159,6 @@ class Navigation(object):
         '''
         timeout_ros = rospy.Duration(timeout)
         time_start = rospy.Time.now()
-        # wait until move_base_safe_server action lib server is available
-        try:
-            self.__nav_client.wait_for_server(rospy.Duration(1))
-        except rospy.ROSException:
-            rospy.logerr('[mbot class] Service /move_base_safe_server is not running')
-            return False
 
         try:
             location_pose = self.get_available_poses()[location]
@@ -172,19 +170,32 @@ class Navigation(object):
         
         if not isinstance(frame_id, str):
             frame_id = 'odom'
-        goal.header.frame = frame_id
+        goal.header.frame_id = frame_id
         goal.header.stamp = rospy.Time.now()
-        goal.pose.orientation = tf.transformations.quaternion_from_euler(0, 0, location_pose[2])
+        quaternion = tf.transformations.quaternion_from_euler(0, 0, location_pose[2])
+        goal.pose.orientation.x = quaternion[0]
+        goal.pose.orientation.y = quaternion[1]
+        goal.pose.orientation.z = quaternion[2]
+        goal.pose.orientation.w = quaternion[3]
         goal.pose.position.x = location_pose[0]
         goal.pose.position.y = location_pose[1]
         goal.pose.position.z = 0
-        
+
+        final_goal = MoveBaseActionGoal()
+        final_goal.header = goal.header
+        final_goal.goal_id.stamp = rospy.Time.now()
+        final_goal.goal_id.id = str(random())
+        goal_id = final_goal.goal_id
+        final_goal.goal.target_pose = goal
+
+        self.__move_base_safe_pub.publish(final_goal)
+
         rospy.loginfo("Sending goal to move_base_simple, destination : " + location)
         
         while not rospy.is_shutdown() and rospy.Time.now() - time_start < timeout_ros:
             if self.__goals_status:
                 for i in self.__goals_status:
-                    if self.__goals_status[i].status == 1:
+                    if i.goal_id == goal_id and i.status == 3:
                         return True
         return False
 
@@ -206,17 +217,30 @@ class Navigation(object):
             frame_id = 'odom'
         goal.header.frame = frame_id
         goal.header.stamp = rospy.Time.now()
-        goal.pose.orientation = tf.transformations.quaternion_from_euler(0, 0, location_pose[2])
+        quaternion = tf.transformations.quaternion_from_euler(0, 0, location_pose[2])
+        goal.pose.orientation.x = quaternion[0]
+        goal.pose.orientation.y = quaternion[1]
+        goal.pose.orientation.z = quaternion[2]
+        goal.pose.orientation.w = quaternion[3]
         goal.pose.position.x = location_pose[0]
         goal.pose.position.y = location_pose[1]
         goal.pose.position.z = 0
         
+        final_goal = MoveBaseActionGoal()
+        final_goal.header = goal.header
+        final_goal.goal_id.stamp = rospy.Time.now()
+        final_goal.goal_id.id = str(random())
+        goal_id = final_goal.goal_id
+        final_goal.goal.target_pose = goal
+
+        self.__move_base_safe_pub.publish(final_goal)
+
         rospy.loginfo("Sending goal to move_base_simple, destination : " + location)
         
         while not rospy.is_shutdown() and rospy.Time.now() - time_start < timeout_ros:
             if self.__goals_status:
                 for i in self.__goals_status:
-                    if self.__goals_status[i].status == 1:
+                    if i.goal_id == goal_id and i.status == 3:
                         return True
         return False
 
@@ -231,7 +255,7 @@ class Navigation(object):
         cancel_msg.stamp = rospy.Time.now()
         if self.__goals_status:
             for i in self.__goals_status:
-                if self.__goals_status[i].status == 0 or self.__goals_status[i].status == 1
+                if self.__goals_status[i].status == 0 or self.__goals_status[i].status == 1:
                     goal_id = self.__goals_status[i].goal_id
                     cancel_msg.id = goal_id
                     self.__cancel_pub.publish(cancel_msg)
