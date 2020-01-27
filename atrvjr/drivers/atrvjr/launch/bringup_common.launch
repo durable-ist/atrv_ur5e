@@ -4,6 +4,8 @@
     <arg name="load_map" default="false"/>
     <arg name="map" default="ch3_sim"/>
     <arg name="robot_env" default="$(arg map)"/>
+    <arg name="ns" default="/mbzirc2020_0"/>
+
     <!-- ADD GROUP NS? -->
     <include file="$(find husky_navigation)/launch/amcl.launch" if="$(arg load_map)"/>
 
@@ -11,7 +13,9 @@
       <arg name="load_map" default="$(arg load_map)"/>
     </include>
 
-    <include file="$(find localization_switch)/ros/launch/localization_switch.launch" if="$(arg load_map)" />
+    <include file="$(find localization_switch)/ros/launch/localization_switch.launch" if="$(arg load_map)" >
+      <arg name="ns" default="$(arg ns)" />
+    </include>
 
     <include file="$(find robot_localization)/launch/navsat_transform_template.launch" />
 

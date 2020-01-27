@@ -25,8 +25,20 @@ def ch3_sm():
                             'failure': 'SWITCH_LOCALIZATION'})
         
         sm.add('WAYPOINT_1', atrv_states.MoveTo('INSIDE_DOOR', frame='map'),
-               transitions={'success': 'OVERALL_SUCCESS',
+               transitions={'success': 'WAYPOINT_2',
                             'failure': 'WAYPOINT_1'})
+              
+        sm.add('WAYPOINT_2', atrv_states.MoveTo('INSIDE_DOOR', frame='map'),
+               transitions={'success': 'DETECT_FIRE',
+                            'failure': 'WAYPOINT_2'})
+        #Create a waypoint_navigation state to intertwine with detect fire
+        sm.add('DETECT_FIRE', atrv_states.DetectFire()
+               transitions={'success': 'PUMP_WATER',
+                            'failure': 'WAYPOINT_2'})
+        
+        sm.add('PUMP_WATER', atrv_states.DetectFire()
+               transitions={'success': 'OVERALL_SUCCESS',
+                            'failure': 'PUMP_WATER'})
 
 
 

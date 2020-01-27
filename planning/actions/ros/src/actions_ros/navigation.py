@@ -9,6 +9,7 @@ from std_msgs.msg import String, Header
 from std_srvs.srv import Empty
 from actionlib_msgs.msg import GoalID, GoalStatusArray, GoalStatus
 from move_base_msgs.msg import MoveBaseActionGoal
+from nav_msgs.msg import OccupancyGrid
 
 from tf.transformations import quaternion_from_euler
 
@@ -26,6 +27,11 @@ class Navigation(object):
         seed(3)
         #Variables
         self.__goals_status = []
+        self.fire_dist = rospy.get_param('/mbzirc2020_0/fire_dist')
+        self.map_ = None
+		self.map_info = None
+  		self.convert_offset = 0.0
+        self.availabilityThreshold = 90
 
         # services
         self.__global_localization_srv = rospy.ServiceProxy("/global_localization", Empty)
@@ -36,9 +42,11 @@ class Navigation(object):
         self.__move_base_safe_pub = rospy.Publisher(ns + '/move_base/goal', MoveBaseActionGoal, queue_size = -1)
         self.__cancel_pub = rospy.Publisher('move_base/cancel', GoalID, queue_size=2)
         self.__pose_pub = rospy.Publisher("/initialpose", PoseWithCovarianceStamped, queue_size=10)
-
+        
         # subscribers
         rospy.Subscriber(ns + '/move_base/status', GoalStatusArray, self.__callback_goal_status)
+        #Subscribe to Costmap
+		self.__sub_costmap_2d = rospy.Subscriber("/move_base/global_costmap/costmap",OccupancyGrid, self.costmapCallback)
 
     def get_available_locations(self):
         '''
@@ -302,6 +310,161 @@ class Navigation(object):
         rospy.logwarn("PERFORMING GLOBAL LOCALIZATION: HOLD YOUR JOYPAD!")
         self.__global_localization_srv.call()
         
+    #Function used to sort the points on the circle around the target goal by distance to the robot
+	def distanceToRobot(self,point):
+		return self.dist2D(point.x, point.y, self.robot_position.x, self.robot_position.y)
+
+    #Function that determines if a certain point on the map is available to be set as goal
+	def isCellAvailable(self, point, occupancy):
+        #get the costmap by subscribing to nav_msgs/OccupancyGrid.msg
+		[x,y]=self.worldToMap(point.x,point.y)
+		cost = self.map_[int(round(x))][int(round(y))]
+		rospy.loginfo("cost is: " + str(cost))
+		if cost <= occupancy:
+			return True
+		else:
+			return False
+
+	#Function to tranform a world coordinate into a map one
+	def worldToMap(self, wx, wy):
+		origin_x = self.map_info.info.origin.position.x
+		origin_y = self.map_info.info.origin.position.y
+		resolution = self.map_info.info.resolution
+
+		if (wx < origin_x or wy < origin_y):
+			return None
+
+		mx = (wx - origin_x) / resolution - self.convert_offset
+		my = (wy - origin_y) / resolution - self.convert_offset
+
+		if (mx < self.map_info.info.width and my < self.map_info.info.height):
+			return [mx , my]
+
+		return None
+
+	#Several points in a straight line will be computed and checked to determine if there is a free straight path to the target
+	def isPathToTargetAvailable(self, origin, target):
+		result = True
+		#equation of the line y=mx+b
+		dx = target.x - origin.x
+		dy = target.y - origin.y
+		if dx != 0:
+			m = dy/dx
+		else:
+			return False #fix this, maybe by making an equation x=my+b
+		b = target.y - m*target.x
+
+		#Calculate the interval of x between  2 consecutive points in the straight line
+		number_of_points = int(round(20 * self.fire_dist))
+		dx=float(dx)
+		interval = dx/number_of_points
+
+		line = []
+		for i in range(1,number_of_points/2):
+			point = Point()
+			point.x = origin.x + interval*i
+			point.y = m * point.x + b
+			point.z = 0
+			line.append(point)
+			if not self.isCellAvailable(point=point,occupancy=self.availabilityThreshold):
+				result = False
+		# self.show_spheres_in_rviz(line)
+		print("result of line is " + str(result))
+		return result
+
+    def getAngle(self, origin, target):
+    	angle_raw = math.atan((target.y- origin.y) / abs(target.x-origin.x))
+		#conditions to counter the decrease of the angle
+		if target.x-origin.x < 0 and angle_raw < 0:
+			angle_refined = - (math.pi + angle_raw)
+		elif target.x-origin.x < 0 and angle_raw > 0:
+			angle_refined = math.pi - angle_raw
+		else:
+			angle_refined = angle_raw
+
+		angle = angle_refined
+
+		#condition to solve the case where the calculated angle and the robot rotation are in different multiples of 2*pi
+		if angle > math.pi:
+			angle = angle - 2 * math.pi
+		elif angle < -math.pi:
+			angle = angle + 2 * math.pi
+   
+		return angle
+        
+    def chooseGoal(self,target_position, robot_position):
+        try:
+            self.fire_dist = rospy.get_param('/mbzirc2020_0/fire_dist')
+        except e:
+            rospy.logerr("Error in importing param of fire dist: " + e)
+        #number of points to check in the circumference
+		number_points = int(self.fire_dist * 25)
+        #radius of the circle
+		r = self.fire_dist
+
+        #To be used in the sorting function
+        self.robot_position = robot_position
+
+		if r > 0:
+			#make a circle of positions, check which ones are closer to the robot, and if it is reachable
+			circle = []
+			for i in range(0,number_points):
+				point = Point()
+				point.x = round(math.cos(2*math.pi/number_points*i)*r,2) + target_position.x
+				point.y = round(math.sin(2*math.pi/number_points*i)*r,2) + target_position.y
+				point.z = 0
+				circle.append(point)
+			#order the circle variable by proximity to the ROBOT
+			circle.sort(key=self.distanceToRobot)
+			self.show_spheres_in_rviz(circle)
+			#iterate the ordered set check if it is a free cell with a clear path to the goal
+			while not rospy.is_shutdown() and len(circle) != 0:
+				if not self.isCellAvailable(circle[0],occupancy=0):
+					del circle[0]
+					rospy.loginfo("deleting possible location")
+				else:
+					if not self.isPathToTargetAvailable(circle[0],target_position):
+						del circle[0]
+						rospy.loginfo("deleting because of line")
+					else:
+						rospy.loginfo("Point can be chosen in: " + str(circle[0].x) + "," + str(circle[0].y) + ")")
+						break
+		else:
+			rospy.loginfo("Radius of circle around fire is wrong")
+   
+		rospy.loginfo("len of circle is :" + str(len(circle)))
+        #return goal, that is the closest point to the robot that was not removed from the list by the previous conditions
+		if len(circle) > 0:
+			return circle[0]
+		else:
+			return target_position
+
+	def show_spheres_in_rviz(self, points):
+    		marker_array = []
+		for i in range(0,len(points)):
+			marker = Marker(
+					type=Marker.SPHERE,
+					id=i,
+					lifetime=rospy.Duration(60),
+					pose=Pose(Point(points[i].x, points[i].y, points[i].z), Quaternion(0, 0, 0, 1)),
+					scale=Vector3(0.1, 0.1, 0.1),
+					header=Header(frame_id='/map'),
+					color=ColorRGBA(0.0, 0.0, 1.0, 0.8))
+			marker_array.append(marker)
+		self.marker_publisher.publish(marker_array)
+        
     def __callback_goal_status(self, data):
         self.__goals_status = data.status_list
+        
+    #Callback for the costmap
+	def costmapCallback(self, data):
+		self.map_info = data		#TODO: maybe smthg more
+
+		#self.map_ = np.arrange(data.info.width*data.info.height).reshape(data.info.width,data.info.height)
+		self.map_ = np.zeros((data.info.width,data.info.height))
+
+		for i in range(0,data.info.height):
+			for j in range(0,data.info.width):
+				self.map_[j][i] = data.data[i*data.info.width + j]
+		self.map_info.data = None
 

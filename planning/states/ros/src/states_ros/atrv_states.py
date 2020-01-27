@@ -46,7 +46,7 @@ class MoveTo(smach.State):
         self.goal = goal
         self.frame = frame
         self.timeout = timeout
-
+      
     def execute(self, userdata):
         if isinstance(self.goal, str):
             if self.goal in navigation.get_available_locations():
@@ -104,6 +104,7 @@ class DetectFire(smach.State):
         smach.State.__init__(self, outcomes=['success', 'failure'])
         self.timeout = rospy.Duration(timeout)
         self.has_fire = False
+        self.fire_position = None
         
         #subscribe to fire topic
         self.fire_topic_sub = rospy.Subscriber(fire_topic, PointStamped, self.fireCallback)
@@ -114,12 +115,26 @@ class DetectFire(smach.State):
         while not rospy.is_shutdown() and rospy.Time.now() - time_start < self.timeout:
             if self.has_fire:
                 self.fire_topic_sub.unregister()
+                robot_pose = navigation.get_current_pose(ref_frame='map')
+                robot_position = Point()
+                robot_position.x = robot_pose[0]
+                robot_position.y = robot_pose[1]
+                robot_position.z = 0.0
+                goal = navigation.chooseGoal(self.fire_position,robot_position)
+                orientation = navigation.getAngle(goal, self.fire_position)
+                final_goal = [0 ,0 ,0]
+                final_goal[0] = goal.x
+                final_goal[1] = goal.y
+                final_goal[2] = orientation
+                navigation.go_to_pose(final_goal, 'map')
                 return 'success'
         self.fire_topic_sub.unregister()
         return 'failure'
     
     def fireCallback(self, data):
         self.has_fire = True
+        self.fire_position = Point()
+        self.fire_position = data.point
         
 class PumpWater(smach.State):
     '''
@@ -138,6 +153,7 @@ class PumpWater(smach.State):
         #Call service to turn off pumps
         rospy.loginfo("Turning off pumps")
         rospy.sleep(1)
+        return 'success'
 class MoveToFire(smach.State):
     '''
     description: robot will choose a pose near the fire and move towards it
@@ -153,3 +169,4 @@ class MoveToFire(smach.State):
         #Choose that distance acording to heigght of fire
         #then return true
         rospy.loginfo("Moving to fire")
+        return 'success'

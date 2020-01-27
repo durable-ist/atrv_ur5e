@@ -40,18 +40,19 @@ class Switch(object):
 		self.origin_y = rospy.get_param(ns + 'origin_y')
 		self.origin_yaw = rospy.get_param(ns + 'origin_yaw')
 		self.amcl_enable_param = rospy.get_param(ns + 'amcl_enable_tf_param')
+		self.topics_namespace = rospy.get_param('switch/namespace')
 
 		#Subscribe to indoors pose topic
-		self.sub_indoors_topic = rospy.Subscriber(self.indoors_topic, PoseWithCovarianceStamped , self.indoorsCallback)
+		self.sub_indoors_topic = rospy.Subscriber(self.topics_namespace + self.indoors_topic, PoseWithCovarianceStamped , self.indoorsCallback)
 
 		#Subscribe to outdoors pose topic
-		self.sub_outdoors_topic = rospy.Subscriber(self.outdoors_topic, Odometry , self.outdoorsCallback)
+		self.sub_outdoors_topic = rospy.Subscriber(self.topics_namespace + self.outdoors_topic, Odometry , self.outdoorsCallback)
 
 		#Subscribe to control topic
-		self.sub_control = rospy.Subscriber(self.control_topic, String, self.controlCallback)
+		self.sub_control = rospy.Subscriber(self.topics_namespace + self.control_topic, String, self.controlCallback)
 
 	 	# #Topic to publish the pose you want to reach
-		self.pose_publisher = rospy.Publisher(self.pub_topic, PoseWithCovarianceStamped, queue_size=5)
+		self.pose_publisher = rospy.Publisher(self.topics_namespace + self.pub_topic, PoseWithCovarianceStamped, queue_size=5)
 		self.amcl_switch_publisher = rospy.Publisher(ns + "amcl_broadcast", Bool, queue_size=1)
 		
 		# Initialize variables

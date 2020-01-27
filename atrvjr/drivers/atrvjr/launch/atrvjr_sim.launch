@@ -6,6 +6,7 @@
     <arg name="rviz" default="true" doc="Starts rviz gui"/>
     <arg name="load_map" default="false"/>
     <arg name="map" default="ch3_sim"/>
+    <arg name="ns" default="/mbzirc2020_0"/>
 
     <rosparam param="/use_sim_time">true</rosparam>
     <include file="$(find challenge_worlds)/launch/challenge2.launch"/>
@@ -39,6 +40,7 @@
     map: defines the name of the map to be used -->
     <include file="$(find atrvjr)/launch/bringup_common.launch">
       <arg name="load_map" default="$(arg load_map)"/>
+      <arg name="ns" default="$(arg ns)"/>
       <arg name="map" default="$(arg map)"/>
     </include>
 
