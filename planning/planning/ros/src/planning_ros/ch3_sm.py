@@ -21,24 +21,109 @@ def ch3_sm():
                             'failure': 'GO_TO_ENTRANCE'})
 
         sm.add('SWITCH_LOCALIZATION', atrv_states.SwitchLocalization("indoors"),
-               transitions={'success': 'WAYPOINT_1',
+               transitions={'success': 'INSIDE_DOOR',
                             'failure': 'SWITCH_LOCALIZATION'})
         
-        sm.add('WAYPOINT_1', atrv_states.MoveTo('INSIDE_DOOR', frame='map'),
-               transitions={'success': 'WAYPOINT_2',
-                            'failure': 'WAYPOINT_1'})
+        sm.add('INSIDE_DOOR', atrv_states.MoveTo('INSIDE_DOOR', frame='map'),
+               transitions={'success': 'ROOM_1',
+                            'failure': 'GO_TO_ENTRANCE'})
               
-        sm.add('WAYPOINT_2', atrv_states.MoveTo('INSIDE_DOOR', frame='map'),
-               transitions={'success': 'DETECT_FIRE',
-                            'failure': 'WAYPOINT_2'})
-        #Create a waypoint_navigation state to intertwine with detect fire
-        sm.add('DETECT_FIRE', atrv_states.DetectFire()
+        sm.add('ROOM_1', atrv_states.MoveTo('ROOM_1', frame='map'),
+               transitions={'success': 'DETECT_FIRE_1',
+                            'failure': 'INSIDE_DOOR'})
+
+        sm.add('DETECT_FIRE_1', atrv_states.DetectFire(),
                transitions={'success': 'PUMP_WATER',
-                            'failure': 'WAYPOINT_2'})
-        
-        sm.add('PUMP_WATER', atrv_states.DetectFire()
-               transitions={'success': 'OVERALL_SUCCESS',
+                            'failure': 'ROOM_2'})
+
+        sm.add('ROOM_2', atrv_states.MoveTo('ROOM_2', frame='map'),
+               transitions={'success': 'DETECT_FIRE_2',
+                            'failure': 'INSIDE_DOOR'})
+
+        sm.add('DETECT_FIRE_2', atrv_states.DetectFire(),
+               transitions={'success': 'PUMP_WATER',
+                            'failure': 'ROOM_3'})
+
+        sm.add('ROOM_3', atrv_states.MoveTo('ROOM_3', frame='map'),
+               transitions={'success': 'DETECT_FIRE_3',
+                            'failure': 'INSIDE_DOOR'})
+
+        sm.add('DETECT_FIRE_3', atrv_states.DetectFire(),
+               transitions={'success': 'PUMP_WATER',
+                            'failure': 'ROOM_4'})
+
+        sm.add('ROOM_4', atrv_states.MoveTo('ROOM_4', frame='map'),
+               transitions={'success': 'DETECT_FIRE_4',
+                            'failure': 'INSIDE_DOOR'})
+
+        sm.add('DETECT_FIRE_4', atrv_states.DetectFire(),
+               transitions={'success': 'PUMP_WATER',
+                            'failure': 'INSIDE_DOOR_KITCHEN'})
+
+        sm.add('INSIDE_DOOR_KITCHEN', atrv_states.MoveTo('INSIDE_DOOR', frame='map'),
+               transitions={'success': 'DETECT_FIRE_INSIDE_DOOR',
+                            'failure': 'KITCHEN_1'})
+
+        sm.add('DETECT_FIRE_INSIDE_DOOR', atrv_states.DetectFire(),
+               transitions={'success': 'PUMP_WATER',
+                            'failure': 'KITCHEN_1'})
+
+        sm.add('KITCHEN_1', atrv_states.MoveTo('KITCHEN_1', frame='map'),
+               transitions={'success': 'DETECT_FIRE_KITCHEN_1',
+                            'failure': 'INSIDE_DOOR_KITCHEN'})
+
+        sm.add('DETECT_FIRE_KITCHEN_1', atrv_states.DetectFire(),
+               transitions={'success': 'PUMP_WATER',
+                            'failure': 'KITCHEN_2'})
+
+        sm.add('KITCHEN_2', atrv_states.MoveTo('KITCHEN_2', frame='map'),
+               transitions={'success': 'DETECT_FIRE_KITCHEN_2',
+                            'failure': 'INSIDE_DOOR_KITCHEN'})
+
+        sm.add('DETECT_FIRE_KITCHEN_2', atrv_states.DetectFire(),
+               transitions={'success': 'PUMP_WATER',
+                            'failure': 'KITCHEN_3'})
+
+        sm.add('KITCHEN_3', atrv_states.MoveTo('KITCHEN_3', frame='map'),
+               transitions={'success': 'DETECT_FIRE_KITCHEN_3',
+                            'failure': 'INSIDE_DOOR_KITCHEN'})
+
+        sm.add('DETECT_FIRE_KITCHEN_3', atrv_states.DetectFire(),
+               transitions={'success': 'PUMP_WATER',
+                            'failure': 'KITCHEN_4'})
+
+        sm.add('KITCHEN_4', atrv_states.MoveTo('KITCHEN_4', frame='map'),
+               transitions={'success': 'DETECT_FIRE_KITCHEN_4',
+                            'failure': 'INSIDE_DOOR_KITCHEN'})
+
+        sm.add('DETECT_FIRE_KITCHEN_4', atrv_states.DetectFire(),
+               transitions={'success': 'PUMP_WATER',
+                            'failure': 'KITCHEN_5'})
+
+        sm.add('KITCHEN_5', atrv_states.MoveTo('KITCHEN_5', frame='map'),
+               transitions={'success': 'DETECT_FIRE_KITCHEN_5',
+                            'failure': 'INSIDE_DOOR_KITCHEN'})
+
+        sm.add('DETECT_FIRE_KITCHEN_5', atrv_states.DetectFire(),
+               transitions={'success': 'PUMP_WATER',
+                            'failure': 'INSIDE_DOOR'})
+
+                
+        sm.add('PUMP_WATER', atrv_states.PumpWater(),
+               transitions={'success': 'ENTRANCE_DOOR_1_FINAL',
                             'failure': 'PUMP_WATER'})
+
+        sm.add('ENTRANCE_DOOR_1_FINAL', atrv_states.MoveTo('ENTRANCE_DOOR_1', frame='map'),
+               transitions={'success': 'SWITCH_LOCALIZATION_FINAL',
+                            'failure': 'ENTRANCE_DOOR_1_FINAL'})
+
+        sm.add('SWITCH_LOCALIZATION_FINAL', atrv_states.SwitchLocalization("outdoors"),
+               transitions={'success': 'ORIGIN',
+                            'failure': 'SWITCH_LOCALIZATION_FINAL'})
+       
+        sm.add('ORIGIN',atrv_states.MoveTo('ORIGIN', frame='map'),
+               transitions={'success': 'OVERALL_SUCCESS',
+                            'failure': 'ORIGIN'})
 
 
 

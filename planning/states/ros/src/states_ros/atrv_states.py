@@ -89,6 +89,7 @@ class SwitchLocalization(smach.State):
         else:
             navigation.switch_location(self.env)
             if self.env=="indoors":
+                rospy.loginfo("Localizing in " +  self.location)
                 navigation.localize_in_location(self.location)
             return 'success'
 
@@ -111,11 +112,12 @@ class DetectFire(smach.State):
         
     def execute(self, userdata):
         time_start = rospy.Time.now()
-        
+        rospy.loginfo("Checking fire")
         while not rospy.is_shutdown() and rospy.Time.now() - time_start < self.timeout:
             if self.has_fire:
-                self.fire_topic_sub.unregister()
+                # self.fire_topic_sub.unregister()
                 robot_pose = navigation.get_current_pose(ref_frame='map')
+                rospy.loginfo(robot_pose)
                 robot_position = Point()
                 robot_position.x = robot_pose[0]
                 robot_position.y = robot_pose[1]
@@ -126,15 +128,17 @@ class DetectFire(smach.State):
                 final_goal[0] = goal.x
                 final_goal[1] = goal.y
                 final_goal[2] = orientation
+                rospy.loginfo(final_goal)
                 navigation.go_to_pose(final_goal, 'map')
                 return 'success'
-        self.fire_topic_sub.unregister()
+        # self.fire_topic_sub.unregister()
         return 'failure'
     
     def fireCallback(self, data):
         self.has_fire = True
         self.fire_position = Point()
         self.fire_position = data.point
+        # rospy.loginfo("I have fireeeeeeeee")
         
 class PumpWater(smach.State):
     '''
@@ -153,20 +157,4 @@ class PumpWater(smach.State):
         #Call service to turn off pumps
         rospy.loginfo("Turning off pumps")
         rospy.sleep(1)
-        return 'success'
-class MoveToFire(smach.State):
-    '''
-    description: robot will choose a pose near the fire and move towards it
-    outcomes: 'success' or 'failure'
-    '''
-    def __init__(self, timeout=120.0):
-        smach.State.__init__(self, outcomes=['success', 'failure'])
-        self.timeout = rospy.Duration(timeout)
-        
-    def execute(self, userdata):
-        #subscrivbe to fire detector to get the point of the fire
-        #Move towards the fire until the fire is at a pre determined distance
-        #Choose that distance acording to heigght of fire
-        #then return true
-        rospy.loginfo("Moving to fire")
         return 'success'

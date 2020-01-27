@@ -77,6 +77,11 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+        cam_support_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         camera_bottom_screw_frame:
           Alpha: 1
           Show Axes: false
@@ -97,11 +102,19 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        camera_left_ir_frame:
+        camera_infra1_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        camera_left_ir_optical_frame:
+        camera_infra1_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_infra2_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_infra2_optical_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -110,14 +123,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        camera_right_ir_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_right_ir_optical_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
         cbimu_frame:
           Alpha: 1
           Show Axes: false
@@ -338,6 +343,8 @@ Visualization Manager:
           Value: false
         base_link:
           Value: false
+        cam_support_link:
+          Value: true
         camera_bottom_screw_frame:
           Value: false
         camera_color_frame:
@@ -348,15 +355,15 @@ Visualization Manager:
           Value: false
         camera_depth_optical_frame:
           Value: false
-        camera_left_ir_frame:
-          Value: false
-        camera_left_ir_optical_frame:
-          Value: false
+        camera_infra1_frame:
+          Value: true
+        camera_infra1_optical_frame:
+          Value: true
+        camera_infra2_frame:
+          Value: true
+        camera_infra2_optical_frame:
+          Value: true
         camera_link:
-          Value: false
-        camera_right_ir_frame:
-          Value: false
-        camera_right_ir_optical_frame:
           Value: false
         cbimu_frame:
           Value: false
@@ -364,10 +371,16 @@ Visualization Manager:
           Value: false
         ee_link:
           Value: true
+        forearm_link:
+          Value: true
         front_left_static:
           Value: false
+        front_left_wheel_link:
+          Value: true
         front_right_static:
           Value: false
+        front_right_wheel_link:
+          Value: true
         hokuyo:
           Value: false
         map:
@@ -380,10 +393,22 @@ Visualization Manager:
           Value: true
         rear_left_static:
           Value: false
+        rear_left_wheel_link:
+          Value: true
         rear_right_static:
           Value: false
+        rear_right_wheel_link:
+          Value: true
+        shoulder_link:
+          Value: true
         tool0:
           Value: false
+        upper_arm_link:
+          Value: true
+        utm:
+          Value: true
+        wrist_1_link:
+          Value: true
         wrist_2_link:
           Value: true
         wrist_3_link:
@@ -399,15 +424,42 @@ Visualization Manager:
             base_link:
               arm_base_frame:
                 arm_base_link:
-                  {}
+                  shoulder_link:
+                    upper_arm_link:
+                      forearm_link:
+                        wrist_1_link:
+                          wrist_2_link:
+                            cam_support_link:
+                              {}
+                            camera_bottom_screw_frame:
+                              camera_link:
+                                camera_color_frame:
+                                  camera_color_optical_frame:
+                                    {}
+                                camera_depth_frame:
+                                  camera_depth_optical_frame:
+                                    {}
+                                camera_infra1_frame:
+                                  camera_infra1_optical_frame:
+                                    {}
+                                camera_infra2_frame:
+                                  camera_infra2_optical_frame:
+                                    {}
+                            wrist_3_link:
+                              ee_link:
+                                {}
+                              tool0:
+                                {}
               cbimu_frame:
                 {}
               center_link:
                 {}
               front_left_static:
-                {}
+                front_left_wheel_link:
+                  {}
               front_right_static:
-                {}
+                front_right_wheel_link:
+                  {}
               hokuyo:
                 {}
               mpuimu_frame:
@@ -415,9 +467,13 @@ Visualization Manager:
               novatel:
                 {}
               rear_left_static:
-                {}
+                rear_left_wheel_link:
+                  {}
               rear_right_static:
-                {}
+                rear_right_wheel_link:
+                  {}
+            utm:
+              {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -586,7 +642,7 @@ Visualization Manager:
       Marker Topic: /visualization_marker_array
       Name: Navigation Goals
       Namespaces:
-        {}
+        base navigation goals: true
       Queue Size: 100
       Value: true
   Enabled: true
