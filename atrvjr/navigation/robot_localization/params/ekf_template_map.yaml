@@ -114,16 +114,16 @@ odom0_relative: false
 # pose0_differential: false
 # pose0_relative: false
 
-# odom1: odometry/gps
-# odom1_config: [true,    true,  false,  #<!-- x,     y,      z position -->
-#                false,   false,  false,  #<!-- roll,  pitch,  yaw orientation angle-->
-#                false,   false,  false,  #<!-- x,     y,      z linear velocity -->
-#                false,   false,  false,   #<!-- roll,  pitch,  yaw angular velocity -->
-#                false,   false,  false]  #<!-- x,     y,      z linear acceleration -->
-# odom1_queue_size: 10
-# odom1_nodelay: false
-# odom1_differential: false
-# odom1_relative: false
+odom1: odometry/gps
+odom1_config: [true,    true,  false,  #<!-- x,     y,      z position -->
+               false,   false,  false,  #<!-- roll,  pitch,  yaw orientation angle-->
+               false,   false,  false,  #<!-- x,     y,      z linear velocity -->
+               false,   false,  false,   #<!-- roll,  pitch,  yaw angular velocity -->
+               false,   false,  false]  #<!-- x,     y,      z linear acceleration -->
+odom1_queue_size: 10
+odom1_nodelay: false
+odom1_differential: false
+odom1_relative: false
 
 # imu0: /atrvjr/mpu/imu/data
 # imu0_config: [false,    false,  false,  #<!-- x,     y,      z position -->

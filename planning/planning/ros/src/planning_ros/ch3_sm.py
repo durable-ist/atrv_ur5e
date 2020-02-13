@@ -113,7 +113,7 @@ def ch3_sm():
                transitions={'success': 'ENTRANCE_DOOR_1_FINAL',
                             'failure': 'PUMP_WATER'})
 
-        sm.add('ENTRANCE_DOOR_1_FINAL', atrv_states.MoveTo('ENTRANCE_DOOR_1', frame='map'),
+        sm.add('ENTRANCE_DOOR_1_FINAL', atrv_states.MoveTo('ENTRANCE_DOOR_1_OUT', frame='map'),
                transitions={'success': 'SWITCH_LOCALIZATION_FINAL',
                             'failure': 'ENTRANCE_DOOR_1_FINAL'})
 
