@@ -1,0 +1,6 @@
+#!/usr/bin/env python
+
+import planning_ros.pump_water
+
+if __name__ == '__main__':
+    planning_ros.pump_water.main()

@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- SMACH state machine node -->
+    <node pkg="planning" type="ch3_sm_node" name="ch3_sm_node" required="true" output="screen" />
+
+</launch>

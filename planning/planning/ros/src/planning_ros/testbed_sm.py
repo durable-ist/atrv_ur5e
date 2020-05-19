@@ -8,48 +8,47 @@ import threading
 from smach import State,StateMachine
 
 #states & actions
-import states_ros.atrv_states_ch3 as atrv_states
+import actions_ros.navigation as navigation
+import states_ros.atrv_states as atrv_states
 
 def ch3_sm():
 
     sm = smach.StateMachine(outcomes=['OVERALL_SUCCESS'])
 
     with sm:
-        sm.add('CHECK_FIRE_1', atrv_states.MoveTo('CHECK_FIRE_1', frame='map'),
+        sm.add('GO_TO_ENTRANCE', atrv_states.MoveTo('ENTRANCE_DOOR_1', frame='map'),
+               transitions={'success': 'SWITCH_LOCALIZATION',
+                            'failure': 'GO_TO_ENTRANCE'})
+
+        sm.add('SWITCH_LOCALIZATION', atrv_states.SwitchLocalization("indoors"),
+               transitions={'success': 'ROOM_1',
+                            'failure': 'SWITCH_LOCALIZATION'})
+              
+        sm.add('ROOM_1', atrv_states.MoveTo('ROOM_1', frame='map'),
                transitions={'success': 'DETECT_FIRE_1',
-                            'failure': 'CHECK_FIRE_2'})
+                            'failure': 'GO_TO_ENTRANCE'})
 
         sm.add('DETECT_FIRE_1', atrv_states.DetectFire(),
-               transitions={'success': 'ARM_FIRE_1',
-                            'failure': 'CHECK_FIRE_2'})
-
-        sm.add('ARM_FIRE_1', atrv_states.MoveArm('1'),
                transitions={'success': 'PUMP_WATER',
-                            'failure': 'CHECK_FIRE_1'})
+                            'failure': 'ROOM_2'})
 
-        sm.add('CHECK_FIRE_2', atrv_states.MoveTo('CHECK_FIRE_2', frame='map'),
+        sm.add('ROOM_2', atrv_states.MoveTo('ROOM_2', frame='map'),
                transitions={'success': 'DETECT_FIRE_2',
-                            'failure': 'CHECK_FIRE_1'})
+                            'failure': 'ROOM_1'})
 
         sm.add('DETECT_FIRE_2', atrv_states.DetectFire(),
-               transitions={'success': 'ARM_FIRE_2',
-                            'failure': 'CHECK_FIRE_1'})
-
-        sm.add('ARM_FIRE_2', atrv_states.MoveArm('2'),
                transitions={'success': 'PUMP_WATER',
-                            'failure': 'CHECK_FIRE_2'})
-                
-        sm.add('PUMP_WATER', atrv_states.PumpWater(duration=5),
-               transitions={'success': 'ORIGIN',
-                            'failure': 'PUMP_WATER'})
-       
-        sm.add('ORIGIN',atrv_states.MoveTo('ORIGIN', frame='map'),
-               transitions={'success': 'OVERALL_SUCCESS',
-                            'failure': 'STOP'})
+                            'failure': 'GO_TO_ENTRANCE'})
 
-        sm.add('STOP', atrv_states.Stop(),
+                
+        sm.add('PUMP_WATER', atrv_states.PumpWater(),
+               transitions={'success': 'ENTRANCE_DOOR_2_FINAL',
+                            'failure': 'PUMP_WATER'})
+
+        sm.add('ENTRANCE_DOOR_2_FINAL', atrv_states.MoveTo('ENTRANCE_DOOR_2', frame='map'),
                transitions={'success': 'OVERALL_SUCCESS',
-                            'failure': 'STOP'})
+                            'failure': 'ENTRANCE_DOOR_2_FINAL'})
+
 
 
 

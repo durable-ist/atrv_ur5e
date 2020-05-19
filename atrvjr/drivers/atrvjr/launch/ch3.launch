@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="map" default="ch3_real"/>
+
+  <!-- BASE COMPONENTS -->
+  <include file = "$(find atrvjr)/launch/atrvjr_hw_no_gps_ch3.launch"/>
+	<include file = "$(find realsense2_camera)/launch/rs_rgbd.launch"/>
+  <include file = "$(find atrvjr)/launch/px4_atrv.launch"/>
+
+  <!-- ARM -->
+  <include file = "$(find ur_robot_driver)/launch/ur5e_bringup.launch"/>
+  <include file = "$(find ur5_e_moveit_config_joao)/launch/move_group.launch"/>
+	<include file = "$(find ur5_magnetic_gripper)/launch/ur5_magnetic_gripper.launch"/>
+
+  <!-- NAVIGATION -->
+  <include file="$(find husky_navigation)/launch/amcl.launch"/>
+  <include file="$(find husky_navigation)/launch/move_base_ch3.launch"/>
+
+  <rosparam command="load" ns="/move_base/navigation_goals" file="$(find maps)/maps/$(arg map)/navigation_goals.yaml"/>
+
+  <!-- visualize navigation goals -->
+  <node pkg="maps" type="navigation_goals_as_marker" name="navigation_goals_as_marker" ns="/move_base" output="screen"/>
+
+  <!-- <arg name="model" default="$(find ur_e_description)/urdf/ur5e_robot.urdf.xacro" /> -->
+
+  <!-- <param name="robot_description" command="$(find xacro)/xacro --><!--inorder $(arg model) use_nominal_extrinsics:=true" /> -->
+
+  <!-- faltam os actuators e a terabee  -->
+  <include file = "$(find atrvjr)/launch/teraranger.launch"/>
+</launch>

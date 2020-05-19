@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+
+
+    <arg name="actuators_serial_path" default="/dev/arduino_pump"/>
+
+    <!-- Param that sets the distance to the fire -->
+    <!-- <include file="$(find actuators_system)/launch/actuators.launch">
+        <arg name="actuators_serial_path" value="$(arg actuators_serial_path)"/>
+    </include> -->
+
+    <!-- SMACH state machine node -->
+    <node pkg="planning" type="pump_water_sm_node" name="pump_water_sm_node" required="true" output="screen" />
+
+</launch>

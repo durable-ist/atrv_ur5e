@@ -32,7 +32,7 @@ class Navigation(object):
         seed(3)
         #Variables
         self.__goals_status = []
-        self.fire_dist = rospy.get_param('/mbzirc2020_0/fire_dist')
+        #self.fire_dist = rospy.get_param('/mbzirc2020_0/fire_dist')
         self.map_ = None
         self.map_info = None
         self.convert_offset = 0.0
@@ -46,14 +46,14 @@ class Navigation(object):
         self.__move_base_pub = rospy.Publisher(ns + '/move_base_simple/goal', PoseStamped, queue_size = -1)
         self.__move_base_safe_pub = rospy.Publisher(ns + '/move_base/goal', MoveBaseActionGoal, queue_size = -1)
         self.__cancel_pub = rospy.Publisher('move_base/cancel', GoalID, queue_size=2)
-        self.__pose_pub = rospy.Publisher("/mbzirc2020_0/initialpose", PoseWithCovarianceStamped, queue_size=10)
+        self.__pose_pub = rospy.Publisher("/initialpose", PoseWithCovarianceStamped, queue_size=10)
         #Topic to draw in rviz
         self.marker_publisher = rospy.Publisher('/visualization_marker_array', MarkerArray, queue_size=5)
         
         # subscribers
         rospy.Subscriber(ns + '/move_base/status', GoalStatusArray, self.__callback_goal_status)
         #Subscribe to Costmap
-        self.__sub_costmap_2d = rospy.Subscriber("/mbzirc2020_0/move_base/global_costmap/costmap",OccupancyGrid, self.costmapCallback)
+        self.__sub_costmap_2d = rospy.Subscriber("/move_base/global_costmap/costmap",OccupancyGrid, self.costmapCallback)
 
     def get_available_locations(self):
         '''
@@ -63,7 +63,7 @@ class Navigation(object):
         output (return): list available_locations, a list with the robot available locations,
                          i.e. ["KITCHEN", "BEDROOM", "LIVING_ROOM"]
         '''
-        return dict.keys(rospy.get_param('/mbzirc2020_0/move_base/navigation_goals'))
+        return dict.keys(rospy.get_param('/move_base/navigation_goals'))
 
     def get_available_poses(self):
         '''
@@ -76,7 +76,7 @@ class Navigation(object):
                                'CORRIDOR': [-6.124564, -12.038472, 1.478612],
                                'DINING_ROOM': [-1.673256, -13.470115, 0.869393]}
         '''
-        return rospy.get_param('/mbzirc2020_0/move_base/navigation_goals')
+        return rospy.get_param('/move_base/navigation_goals')
 
     def get_current_pose(self, ref_frame, timeout=10):
         '''
@@ -215,7 +215,7 @@ class Navigation(object):
         return False
 
 
-    def go_to_pose(self, location_pose, frame_id, back_up=[1, 1], timeout=50):
+    def go_to_pose(self, location_pose, frame_id, timeout=50):
         '''
         description: move the robot to the desired pose
         needs: mir_move_base_safe and mbot_actions move_base_server
@@ -257,8 +257,6 @@ class Navigation(object):
                 for i in self.__goals_status:
                     if i.goal_id == goal_id and i.status == 3:
                         return True
-                    if i.goal_id == goal_id and i.status == 4:
-                        return self.go_to_pose([location_pose[0]+back_up[0], location_pose[1]+back_up[1], location_pose[2]], frame_id=frame_id, back_up=back_up, timeout=timeout)
         return False
 
     def stop_movement(self, timeout=5.0):
@@ -271,9 +269,9 @@ class Navigation(object):
         cancel_msg = GoalID()
         cancel_msg.stamp = rospy.Time.now()
         if self.__goals_status:
-            for goal in self.__goals_status:
-                if goal.status == 0 or goal.status == 1:
-                    goal_id = goal.goal_id
+            for i in self.__goals_status:
+                if self.__goals_status[i].status == 0 or self.__goals_status[i].status == 1:
+                    goal_id = self.__goals_status[i].goal_id
                     cancel_msg.id = goal_id
                     self.__cancel_pub.publish(cancel_msg)
                     return True
@@ -449,30 +447,8 @@ class Navigation(object):
         # rospy.loginfo("len of circle is :" + str(len(circle)))
         #return goal, that is the closest point to the robot that was not removed from the list by the previous conditions
         if len(circle) > 0:
-            marker_array = []
-            marker = Marker(
-                    type=Marker.SPHERE,
-                    id=300,
-                    lifetime=rospy.Duration(60),
-                    pose=Pose(Point(circle[0].x, circle[0].y, circle[0].z), Quaternion(0, 0, 0, 1)),
-                    scale=Vector3(0.15, 0.15, 0.15),
-                    header=Header(frame_id='/map'),
-                    color=ColorRGBA(1.0, 0.0, 0.0, 0.8))
-            marker_array.append(marker)
-            self.marker_publisher.publish(marker_array)
             return circle[0]
         else:
-            marker_array = []
-            marker = Marker(
-                    type=Marker.SPHERE,
-                    id=300,
-                    lifetime=rospy.Duration(60),
-                    pose=Pose(Point(target_position.x, target_position.y, target_position.z), Quaternion(0, 0, 0, 1)),
-                    scale=Vector3(0.15, 0.15, 0.15),
-                    header=Header(frame_id='/map'),
-                    color=ColorRGBA(1.0, 0.0, 0.0, 0.8))
-            marker_array.append(marker)
-            self.marker_publisher.publish(marker_array)
             return target_position
 
     def show_spheres_in_rviz(self, points):

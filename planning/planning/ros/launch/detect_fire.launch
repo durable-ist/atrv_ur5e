@@ -6,9 +6,9 @@
     </include> -->
 
     <!-- Param that sets the distance to the fire -->
-    <param name="/mbzirc2020_0/fire_dist" value="1.5"/>
+    <param name="/mbzirc2020_0/fire_dist" value="2"/>
 
     <!-- SMACH state machine node -->
-    <node pkg="planning" type="ch3_sm_node" name="ch3_sm_node" required="true" output="screen" />
+    <node pkg="planning" type="testbed_detect_only_sm_node" name="testbed_detect_only_sm_node" required="true" output="screen" />
 
 </launch>

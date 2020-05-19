@@ -1,0 +1,6 @@
+#!/usr/bin/env python
+
+import actions_ros.fire_depth_estimation
+
+if __name__ == '__main__':
+    actions_ros.fire_depth_estimation.main()

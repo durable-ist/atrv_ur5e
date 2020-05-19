@@ -8,7 +8,7 @@ import threading
 from smach import State,StateMachine
 
 #states & actions
-import states_ros.atrv_states_ch3 as atrv_states
+import states_ros.atrv_states as atrv_states
 
 def ch3_sm():
 
@@ -19,30 +19,34 @@ def ch3_sm():
                transitions={'success': 'DETECT_FIRE_1',
                             'failure': 'CHECK_FIRE_2'})
 
-        sm.add('DETECT_FIRE_1', atrv_states.DetectFire(),
+        sm.add('DETECT_FIRE_1', atrv_states.DetectFire(test=True),
                transitions={'success': 'ARM_FIRE_1',
                             'failure': 'CHECK_FIRE_2'})
 
         sm.add('ARM_FIRE_1', atrv_states.MoveArm('1'),
-               transitions={'success': 'PUMP_WATER',
+               transitions={'success': 'PUMP_WATER_1',
                             'failure': 'CHECK_FIRE_1'})
 
         sm.add('CHECK_FIRE_2', atrv_states.MoveTo('CHECK_FIRE_2', frame='map'),
-               transitions={'success': 'DETECT_FIRE_2',
-                            'failure': 'CHECK_FIRE_1'})
-
-        sm.add('DETECT_FIRE_2', atrv_states.DetectFire(),
                transitions={'success': 'ARM_FIRE_2',
                             'failure': 'CHECK_FIRE_1'})
 
-        sm.add('ARM_FIRE_2', atrv_states.MoveArm('2'),
-               transitions={'success': 'PUMP_WATER',
+        sm.add('DETECT_FIRE_2', atrv_states.DetectFire(test=True),
+               transitions={'success': 'PUMP_WATER_2',
                             'failure': 'CHECK_FIRE_2'})
+
+        sm.add('ARM_FIRE_2', atrv_states.MoveArm('2'),
+               transitions={'success': 'DETECT_FIRE_2',
+                            'failure': 'CHECK_FIRE_1'})
                 
-        sm.add('PUMP_WATER', atrv_states.PumpWater(duration=5),
-               transitions={'success': 'ORIGIN',
-                            'failure': 'PUMP_WATER'})
+        sm.add('PUMP_WATER_1', atrv_states.PumpWater(duration=5),
+               transitions={'success': 'CHECK_FIRE_2',
+                            'failure': 'PUMP_WATER_1'})
        
+        sm.add('PUMP_WATER_2', atrv_states.PumpWater(duration=5),
+               transitions={'success': 'ORIGIN',
+                            'failure': 'PUMP_WATER_2'})
+
         sm.add('ORIGIN',atrv_states.MoveTo('ORIGIN', frame='map'),
                transitions={'success': 'OVERALL_SUCCESS',
                             'failure': 'STOP'})
