@@ -55,7 +55,7 @@ class PoseSelector(object):
         move_group = rospy.get_param('~move_group', None)
         assert move_group is not None, "Move group must be specified."
         client = actionlib.SimpleActionClient(move_group, moveit_msgs.msg.MoveGroupAction)
-        rospy.loginfo("Waiting for '{0}' server".format(move_group))
+        rospy.loginfo("Waiting for '{0}' server2".format(move_group))
         client.wait_for_server()
         rospy.loginfo("Found server '{0}'".format(move_group))
 

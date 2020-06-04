@@ -20,7 +20,7 @@ class Kinematics:
         #rospy.loginfo("Waiting for '{0}' server".format(move_group))
         #client.wait_for_server()
         #rospy.loginfo("Found server '{0}'".format(move_group))
-
+        
         self.group_name = group_name
        
         self.group = moveit_commander.MoveGroupCommander(self.group_name)

@@ -3,7 +3,7 @@
 
   <gazebo>
     <plugin name="ros_control" filename="libgazebo_ros_control.so">
-      <robotNamespace>/mbzirc2020_0</robotNamespace>
+      <!-- <robotNamespace>/mbzirc2020_0</robotNamespace> -->
       <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
       <legacyModeNS>true</legacyModeNS>
 
@@ -48,7 +48,7 @@
     <plugin name="novatel_gps_sim" filename="libhector_gazebo_ros_gps.so">
       <alwaysOn>1</alwaysOn>
       <updateRate>20.0</updateRate>
-      <bodyName>novatel</bodyName>
+      <bodyName>atrvjr/novatel</bodyName>
       <topicName>fix</topicName>
       <velocityTopicName>fix_velocity</velocityTopicName>
       <drift>0 0 0</drift>

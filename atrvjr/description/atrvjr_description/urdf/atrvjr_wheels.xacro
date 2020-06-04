@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://wiki.ros.org/xacro" name="atrvjr" >
   
   <!-- wheel macro -->
-  <xacro:macro name="wheel" params="prefix side origin_x origin_y *joint_pose">
+  <xacro:macro name="wheel" params="prefix side origin_x origin_y *joint_pose parent">
     <!-- dummy link from which the real wheel will rotate from -->
     <link name="${prefix}_${side}_static">
       <inertial>
@@ -17,7 +17,7 @@
     
     <!-- to specify the position of the dummy link w.r.t. base link -->
     <joint name="${prefix}_${side}_static_joint" type="fixed">
-      <parent link="base_link"/>
+      <parent link="${parent}"/>
       <child link="${prefix}_${side}_static" />
       <origin xyz="${origin_x} ${origin_y} ${wheel_radius}" rpy="0 0 0" />
     </joint>

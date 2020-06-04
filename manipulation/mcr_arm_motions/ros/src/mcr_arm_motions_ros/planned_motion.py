@@ -48,10 +48,13 @@ class PlannedMotion(object):
 
         # Name of the group to move
         arm = rospy.get_param('~arm', None)
+
         assert arm is not None, "The group to be moved must be specified (e.g. arm)."
 
         # Set up MoveIt!
         self.arm = moveit_commander.MoveGroupCommander(arm)
+
+        
 
         self.scene = moveit_commander.PlanningSceneInterface()
 

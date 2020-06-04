@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="atrvjr">
-    <xacro:macro name="atrvjr" params="armConnectionFrame">
+    <xacro:macro name="atrvjr" params="armConnectionFrame prefix">
 
 
     <xacro:property name="M_PI" value="3.14159"/>
@@ -23,22 +23,22 @@
     <xacro:property name="wheel_lat_offset" value="0.25" /> <!-- distance from robot center to wheel center in y direction (lateral direction) -->
 
 
-    <xacro:include filename="$(find atrvjr_description)/urdf/atrvjr_wheels.xacro" />
+    <xacro:include filename="$(find atrvjr_description)/urdf/atrvjr_wheels.xacro"/>
 
     <!-- mbot wheel generation based on imported macro -->
-    <xacro:wheel prefix="front" side="left" origin_x="${wheel_long_offset}" origin_y="${wheel_lat_offset}" >
+    <xacro:wheel prefix="${prefix}front" side="left" origin_x="${wheel_long_offset}" origin_y="${wheel_lat_offset}" parent="${prefix}base_link" >
         <origin xyz="0 0 0" rpy="0 0 0" />
     </xacro:wheel>
 
-    <xacro:wheel prefix="front" side="right" origin_x="${wheel_long_offset}" origin_y="-${wheel_lat_offset}" >
+    <xacro:wheel prefix="${prefix}front" side="right" origin_x="${wheel_long_offset}" origin_y="-${wheel_lat_offset}" parent="${prefix}base_link" >
         <origin xyz="0 0 0" rpy="0 0 0" />
     </xacro:wheel>
 
-    <xacro:wheel prefix="rear" side="left" origin_x="-${wheel_long_offset}" origin_y="${wheel_lat_offset}" >
+    <xacro:wheel prefix="${prefix}rear" side="left" origin_x="-${wheel_long_offset}" origin_y="${wheel_lat_offset}" parent="${prefix}base_link" >
         <origin xyz="0 0 0" rpy="0 0 0" />
     </xacro:wheel>
 
-    <xacro:wheel prefix="rear" side="right" origin_x="-${wheel_long_offset}" origin_y="-${wheel_lat_offset}" >
+    <xacro:wheel prefix="${prefix}rear" side="right" origin_x="-${wheel_long_offset}" origin_y="-${wheel_lat_offset}" parent="${prefix}base_link" >
         <origin xyz="0 0 0" rpy="0 0 0" />
     </xacro:wheel>
 
@@ -89,7 +89,7 @@
     <!-- base_link -->
     <!-- The frame of the floor directly below the center_link and -->
     <!-- is needed for the navigation stack to work properly -->
-    <link name="base_link">
+    <link name="${prefix}base_link">
 
         <inertial>
             <origin xyz="0.0 0.0 0.2" rpy="0 0 0"/>
@@ -102,7 +102,7 @@
     <!-- The link that is the origin of all of the components of the -->
     <!-- robot and should also represent the main chassis via inertial, -->
     <!-- visual, and geometry elements of the link -->
-    <link name="center_link">
+    <link name="${prefix}center_link">
         <visual>
             <geometry>
                 <mesh filename="package://atrvjr_description/meshes/atrv_body.dae" />
@@ -117,52 +117,52 @@
     </link>
 
     <!-- base_link -> center_link -->
-    <joint name="base_link_joint" type="fixed">
+    <joint name="${prefix}base_link_joint" type="fixed">
         <origin xyz="-0.1 0.19 ${center_height-0.1}" rpy="1.57 0 0"/>
-        <parent link="base_link"/>
-        <child link="center_link"/>
+        <parent link="${prefix}base_link"/>
+        <child link="${prefix}center_link"/>
     </joint>
 
 
 
 
      <!-- Arm Link -->
-    <link name="${armConnectionFrame}"/>
+    <link name="${prefix}${armConnectionFrame}"/>
 
-    <joint name="$to_{armConnectionFrame}_joint" type="fixed">
+    <joint name="${prefix}$to_{armConnectionFrame}_joint" type="fixed">
         <origin xyz="0.09 0 0.47" rpy="0 0 0"/>
-        <parent link="base_link"/>
-        <child link="${armConnectionFrame}"/>
+        <parent link="${prefix}base_link"/>
+        <child link="${prefix}${armConnectionFrame}"/>
     </joint>
 
     <!-- Crossbow Imu Link -->
-    <link name="cbimu_frame"/>
+    <link name="${prefix}cbimu_frame"/>
 
-    <joint name="base_cbimu_joint" type="fixed">
+    <joint name="${prefix}base_cbimu_joint" type="fixed">
         <origin xyz="0 0 0.267" rpy="0 ${M_PI} 0"/>
-        <parent link="base_link"/>
-        <child link="cbimu_frame"/>
+        <parent link="${prefix}base_link"/>
+        <child link="${prefix}cbimu_frame"/>
     </joint>
 
         <!-- MPU Imu Link -->
-    <link name="mpuimu_frame"/>
+    <link name="${prefix}mpuimu_frame"/>
 
-    <joint name="base_mpuimu_joint" type="fixed">
+    <joint name="${prefix}base_mpuimu_joint" type="fixed">
         <origin xyz="0 -0.1 0.55" rpy="0 0 0"/>
-        <parent link="base_link"/>
-        <child link="mpuimu_frame"/>
+        <parent link="${prefix}base_link"/>
+        <child link="${prefix}mpuimu_frame"/>
     </joint>
 
-    <link name="novatel"/>
+    <link name="${prefix}novatel"/>
 
-    <joint name="novatel_joint" type="fixed">
+    <joint name="${prefix}novatel_joint" type="fixed">
         <origin xyz="-0.15 0.1 0.55" rpy="0 0 0"/>
-        <parent link="base_link"/>
-        <child link="novatel"/>
+        <parent link="${prefix}base_link"/>
+        <child link="${prefix}novatel"/>
     </joint>
 
 
-    <link name="hokuyo"/>
+    <link name="${prefix}hokuyo"/>
 <!--         <visual>
             <geometry>
                 <box size="0.02 0.035 0.002"/>
@@ -175,10 +175,10 @@
         </inertial>
     </link> -->
 
-    <joint name="laser_joint" type="fixed">
+    <joint name="${prefix}laser_joint" type="fixed">
         <origin xyz="0.37 0 0.135" rpy="${M_PI} 0 0"/>
-        <parent link="base_link" />
-        <child link="hokuyo" />
+        <parent link="${prefix}base_link" />
+        <child link="${prefix}hokuyo" />
     </joint>
 
    <!--  <transmission name="teste_prismatic_trans">

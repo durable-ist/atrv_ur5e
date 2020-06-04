@@ -4,7 +4,7 @@
     <arg name="load_map" default="false"/>
     <arg name="map" default="ch3_sim"/>
     <arg name="robot_env" default="$(arg map)"/>
-    <arg name="ns" default="/mbzirc2020_0"/>
+    <arg name="ns" default="$(arg ns)"/>
 
     <!-- ADD GROUP NS? -->
     <include file="$(find husky_navigation)/launch/amcl.launch" if="$(arg load_map)"/>
@@ -20,7 +20,10 @@
     <include file="$(find robot_localization)/launch/navsat_transform_template.launch" />
 
     <include file="$(find ur5_e_moveit_config_joao)/launch/move_group.launch"/>
-    <include file="$(find atrv_pregrasp_planning)/ros/launch/pregrasp_planner.launch"/>
+
+    <include file="$(find atrv_pregrasp_planning)/ros/launch/pregrasp_planner.launch">
+      <arg name="namespace_pregrasp" default="$(arg ns)" />
+    </include>
 
     <group if="$(arg load_map)">
         <include file="$(find husky_navigation)/launch/move_base.launch">

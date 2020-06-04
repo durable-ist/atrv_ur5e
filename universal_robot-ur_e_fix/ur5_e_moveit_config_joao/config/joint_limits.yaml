@@ -2,32 +2,32 @@
 # Specific joint properties can be changed with the keys [max_position, min_position, max_velocity, max_acceleration]
 # Joint limits can be turned off with [has_velocity_limits, has_acceleration_limits]
 joint_limits:
-  elbow_joint:
+  atrvjr/elbow_joint:
     has_velocity_limits: true
     max_velocity: 2
     has_acceleration_limits: false
     max_acceleration: 0
-  shoulder_lift_joint:
+  atrvjr/shoulder_lift_joint:
     has_velocity_limits: true
     max_velocity: 2
     has_acceleration_limits: false
     max_acceleration: 0
-  shoulder_pan_joint:
+  atrvjr/shoulder_pan_joint:
     has_velocity_limits: true
     max_velocity: 2
     has_acceleration_limits: false
     max_acceleration: 0
-  wrist_1_joint:
+  atrvjr/wrist_1_joint:
     has_velocity_limits: true
     max_velocity: 3
     has_acceleration_limits: false
     max_acceleration: 0
-  wrist_2_joint:
+  atrvjr/wrist_2_joint:
     has_velocity_limits: true
     max_velocity: 3
     has_acceleration_limits: false
     max_acceleration: 0
-  wrist_3_joint:
+  atrvjr/wrist_3_joint:
     has_velocity_limits: true
     max_velocity: 3
     has_acceleration_limits: false

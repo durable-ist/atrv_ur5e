@@ -42,9 +42,9 @@
   <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform_node" clear_params="true">
     <rosparam command="load" file="$(find robot_localization)/params/navsat_transform_template.yaml" />
 
-    <remap from="imu/data" to="/mbzirc2020_0/imu/data"/>
-    <remap from="gps/fix" to="/mbzirc2020_0/fix"/>
-    <remap from="odometry/filtered" to="/mbzirc2020_0/odometry/filtered"/>    
+    <remap from="imu/data" to="/atrvjr/imu/data"/>
+    <remap from="gps/fix" to="/atrvjr/fix"/>
+    <remap from="odometry/filtered" to="/atrvjr/odometry/filtered"/>    
 
     <!-- POR ESTES REMAPS COM UM ARG PARA O MBZIRC2020_0 -->
 
