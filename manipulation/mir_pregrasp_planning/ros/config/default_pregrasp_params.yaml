@@ -13,7 +13,7 @@ max_height: 0.0
 min_height: 0.0
 height_tolerance: 0.24
 angular_tolerance: 10.0
-target_frame: base_link
+target_frame: atrvjr/base_link
 reference_axis: z
 rotation_offset: 0.0
 linear_offset_x: 0.0

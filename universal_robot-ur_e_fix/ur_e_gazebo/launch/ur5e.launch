@@ -40,9 +40,9 @@
   <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform_node" clear_params="true">
         <rosparam command="load" file="$(find robot_localization)/params/navsat_transform_template.yaml" />
         
-        <remap from="imu/data" to="/imu_plugin"/>
-        <remap from="gps/fix" to="/fix"/>
-        <remap from="odometry/filtered" to="odometry/filtered"/>
+        <remap from="imu/data" to="atrvjr/imu_plugin"/>
+        <remap from="gps/fix" to="atrvjr/fix"/>
+        <remap from="odometry/filtered" to="atrvjr/odometry/filtered"/>
   </node>
 
 

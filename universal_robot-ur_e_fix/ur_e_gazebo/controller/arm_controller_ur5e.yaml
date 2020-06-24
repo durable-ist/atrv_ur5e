@@ -36,7 +36,8 @@ base_controller:
   right_wheel: ['atrvjr/front_right_wheel','atrvjr/rear_right_wheel']
   pose_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
   twist_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
-
+  base_frame_id: atrvjr/base_link
+  odom_frame_id: atrvjr/odom
   wheel_separation : 0.655   #diagonal distancia roda frente esq - roda tras direita --> aumentar para virar mais rapido
   wheel_radius : 0.155
   enable_odom_tf: false

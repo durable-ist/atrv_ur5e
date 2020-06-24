@@ -3,11 +3,11 @@
 
   <arg name= "namespace_pregrasp" default="$(arg namespace_pregrasp)"/>  
 
-  <arg name="gui" default="false" />
+  <arg name="gui" default="true" />
 
   <arg name="reference_frame" default="$(arg namespace_pregrasp)base_link" />
 
-  <arg name="pregrasp_planner_pose_in" default="$(arg namespace_pregrasp)/armIKpipeline/target_pose" />
+  <arg name="pregrasp_planner_pose_in" default="armIKpipeline/target_pose" />
 
   <arg name= "namespace_robot" default=""/> <!-- ATENCAO - POR A BARRA -->
 

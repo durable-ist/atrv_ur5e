@@ -42,9 +42,9 @@ publish_tf: true
 publish_acceleration: false
 
 #### map_frame: odom             # Defaults to "map" if unspecified
-odom_frame: odom            # Defaults to "odom" if unspecified
-base_link_frame: base_link  # Defaults to "base_link" if unspecified
-world_frame: odom       # Defaults to the value of odom_frame if unspecified
+odom_frame: atrvjr/odom            # Defaults to "odom" if unspecified
+base_link_frame: atrvjr/base_link  # Defaults to "base_link" if unspecified
+world_frame: atrvjr/odom       # Defaults to the value of odom_frame if unspecified
 
 
 

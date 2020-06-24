@@ -171,7 +171,7 @@ def publish_pose():
     loop_rate = rospy.Rate(rospy.get_param('~loop_rate', 10))
 
     # the transparency of the object to be visualized
-    reference_frame = rospy.get_param('~reference_frame', 'base_link')
+    reference_frame = rospy.get_param('~reference_frame', 'atrvjr/base_link')
 
     # the transparency of the object to be visualized
     transparency = rospy.get_param('~transparency', 0.5)
