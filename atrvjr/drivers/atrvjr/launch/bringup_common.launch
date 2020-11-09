@@ -21,9 +21,9 @@
 
     <include file="$(find ur5_e_moveit_config_joao)/launch/move_group.launch"/>
 
-    <include file="$(find atrv_pregrasp_planning)/ros/launch/pregrasp_planner.launch">
+    <!-- <include file="$(find atrv_pregrasp_planning)/ros/launch/pregrasp_planner.launch">
       <arg name="namespace_pregrasp" default="$(arg ns)" />
-    </include>
+    </include> -->
 
     <group if="$(arg load_map)">
         <include file="$(find husky_navigation)/launch/move_base.launch">
