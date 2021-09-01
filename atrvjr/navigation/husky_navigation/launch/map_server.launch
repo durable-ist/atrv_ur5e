@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="robot_env" default="ch3_real"/>
+
+  <arg name="map" default="$(find maps)/maps/$(arg robot_env)/map.yaml" />
+  <node pkg="map_server" name="map_server" type="map_server" args="$(arg map)" />
+
+</launch>

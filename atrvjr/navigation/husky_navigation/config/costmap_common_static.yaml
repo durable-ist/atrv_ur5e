@@ -1,4 +1,4 @@
-footprint: [[-0.41, -0.35], [-0.41, 0.35], [0.41, 0.35], [0.46, 0.0], [0.41, -0.35]]
+footprint: [[-0.45, -0.35], [-0.45, 0.35], [0.41, 0.35], [0.46, 0.0], [0.41, -0.35]]
 footprint_padding: 0.03
 
 robot_base_frame: base_link
@@ -14,7 +14,7 @@ raytrace_range: 6.0
 
 #layer definitions
 static:
-    map_topic: /mbzirc2020_0/map   #estava a map
+    map_topic: /map   #estava a map
     subscribe_to_updates: true
 
 obstacles_laser:
