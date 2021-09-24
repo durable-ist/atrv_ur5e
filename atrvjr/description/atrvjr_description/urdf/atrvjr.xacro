@@ -135,22 +135,14 @@
         <child link="${prefix}${armConnectionFrame}"/>
     </joint>
 
-    <!-- Crossbow Imu Link -->
-    <link name="${prefix}cbimu_frame"/>
 
-    <joint name="${prefix}base_cbimu_joint" type="fixed">
-        <origin xyz="0 0 0.267" rpy="0 ${M_PI} 0"/>
+        <!-- pixhawk Imu Link -->
+    <link name="${prefix}pixhawkimu_frame"/>
+
+    <joint name="${prefix}base_pixhawkimu_joint" type="fixed">
+        <origin xyz="0 0.0 0.55" rpy="0 0 0"/>
         <parent link="${prefix}base_link"/>
-        <child link="${prefix}cbimu_frame"/>
-    </joint>
-
-        <!-- MPU Imu Link -->
-    <link name="${prefix}mpuimu_frame"/>
-
-    <joint name="${prefix}base_mpuimu_joint" type="fixed">
-        <origin xyz="0 -0.1 0.55" rpy="0 0 0"/>
-        <parent link="${prefix}base_link"/>
-        <child link="${prefix}mpuimu_frame"/>
+        <child link="${prefix}pixhawkimu_frame"/>
     </joint>
 
     <link name="${prefix}novatel"/>

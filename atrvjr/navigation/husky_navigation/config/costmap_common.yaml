@@ -14,7 +14,7 @@ raytrace_range: 5
 
 #layer definitions
 static:
-    map_topic: atrvjr/odom   #estava a map
+    map_topic: map   #estava a map
     subscribe_to_updates: true
 
 obstacles_laser:

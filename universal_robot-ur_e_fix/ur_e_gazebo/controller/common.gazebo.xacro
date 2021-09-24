@@ -25,20 +25,20 @@
   </gazebo>
 
 
-<gazebo reference="mpuimu_frame">
+<gazebo reference="atrvjr/pixhawkimu_frame">
     <gravity>true</gravity>
-    <sensor name="mpu_imu" type="imu">
+    <sensor name="pixhawk_imu" type="imu">
         <always_on>true</always_on>
         <update_rate>100</update_rate>
-        <topic>/imu</topic>
+        <topic>pixhawkimu/data</topic>
         <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
-            <topicName>/imu/data</topicName>
-            <bodyName>mpuimu_frame</bodyName>
+            <topicName>pixhawkimu/data</topicName>
+            <bodyName>atrvjr/pixhawkimu_frame</bodyName>
             <updateRateHZ>100</updateRateHZ>
             <gaussianNoise>0.0</gaussianNoise>
             <xyzOffset>0 0 0</xyzOffset>
             <rpyOffset>0 0 0</rpyOffset>
-            <frameName>mpuimu_frame</frameName>
+            <frameName>atrvjr/pixhawkimu_frame</frameName>
         </plugin>
         <pose>0 0 0 0 0 0</pose>
     </sensor>
@@ -50,6 +50,8 @@
       <updateRate>20.0</updateRate>
       <bodyName>atrvjr/novatel</bodyName>
       <topicName>fix</topicName>
+      <referenceLatitude>38.540272</referenceLatitude>
+      <referenceLongitude>-7.962953</referenceLongitude>  
       <velocityTopicName>fix_velocity</velocityTopicName>
       <drift>0 0 0</drift>
       <gaussianNoise>0.0 0.0 0.0</gaussianNoise>
