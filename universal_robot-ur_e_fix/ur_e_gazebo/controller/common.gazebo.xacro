@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
-
+  
+  <xacro:property name="prefix" value="atrvjr/"/>
+  
   <gazebo>
     <plugin name="ros_control" filename="libgazebo_ros_control.so">
       <!-- <robotNamespace>/mbzirc2020_0</robotNamespace> -->
@@ -25,7 +27,7 @@
   </gazebo>
 
 
-<gazebo reference="atrvjr/pixhawkimu_frame">
+<gazebo reference="${prefix}pixhawkimu_frame">
     <gravity>true</gravity>
     <sensor name="pixhawk_imu" type="imu">
         <always_on>true</always_on>
@@ -62,15 +64,15 @@
  </gazebo>
 
  
-  <gazebo reference="hokuyo">
+  <gazebo reference="${prefix}hokuyo">
     <sensor type="ray" name="head_hokuyo_sensor">
       <pose>0 0 0 0 0 0</pose>
-      <visualize>true</visualize>
-      <update_rate>40</update_rate>
+      <visualize>false</visualize>
+      <update_rate>20</update_rate>
       <ray>
         <scan>
           <horizontal>
-            <samples>2000</samples>
+            <samples>1080</samples>
             <resolution>0.5</resolution>
             <min_angle>-1.5561945</min_angle>
             <max_angle>1.5561945</max_angle>
@@ -93,31 +95,31 @@
       </ray>
       <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
         <topicName>scan</topicName>
-        <frameName>/hokuyo</frameName>
+        <frameName>hokuyo</frameName>
       </plugin>
     </sensor>
   </gazebo>
 
 
-  <gazebo reference="front_left_wheel_link">
+  <gazebo reference="${prefix}front_left_wheel_link">
     <material>Gazebo/DarkGrey</material>
     <mu1>1</mu1>
     <mu2>1</mu2>
   </gazebo>
 
-  <gazebo reference="front_right_wheel_link">
+  <gazebo reference="${prefix}front_right_wheel_link">
     <material>Gazebo/DarkGrey</material>
     <mu1>1</mu1>
     <mu2>1</mu2>
   </gazebo>
 
-  <gazebo reference="rear_left_wheel_link">
+  <gazebo reference="${prefix}rear_left_wheel_link">
     <material>Gazebo/DarkGrey</material>
     <mu1>1</mu1>
     <mu2>1</mu2>
   </gazebo>
 
-  <gazebo reference="rear_right_wheel_link">
+  <gazebo reference="${prefix}rear_right_wheel_link">
     <material>Gazebo/DarkGrey</material>
     <mu1>1</mu1>
     <mu2>1</mu2>

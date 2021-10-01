@@ -1,7 +1,7 @@
 footprint: [[-0.45, -0.35], [-0.45, 0.35], [0.41, 0.35], [0.46, 0.0], [0.41, -0.35]]
 footprint_padding: 0.03
 
-robot_base_frame: base_link
+robot_base_frame: atrvjr/base_link
 update_frequency: 2   # estava a 4
 publish_frequency: 5
 transform_tolerance: 0.5
@@ -14,12 +14,12 @@ raytrace_range: 6.0
 
 #layer definitions
 static:
-    map_topic: /map   #estava a map
+    map_topic: atrvjr/odom   #estava a map
     subscribe_to_updates: true
 
 obstacles_laser:
     observation_sources: laser
-    laser: {data_type: LaserScan, clearing: true, marking: true, topic: scan, inf_is_valid: true}
+    laser: {data_type: LaserScan, clearing: true, marking: true, topic: /atrvjr/scan, inf_is_valid: true}
 
 # obstacles_cloud:
 #     observation_sources: pointcloud_sensor
