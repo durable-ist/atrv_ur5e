@@ -59,7 +59,7 @@
       <gaussianNoise>0.0 0.0 0.0</gaussianNoise>
       <velocityDrift>0 0 0</velocityDrift>
       <velocityGaussianNoise>0.0 0.0 0.0</velocityGaussianNoise>
-      <frameId>novatel</frameId>
+      <frameId>atrvjr/novatel</frameId>
     </plugin>
  </gazebo>
 

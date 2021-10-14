@@ -59,6 +59,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 
     <!-- <remap from="/cmd_vel" to="/rflex/atrvjr_node/cmd_vel"/> -->
     <remap from="cmd_vel" to="base_controller/cmd_vel"/>
+    <remap from="odom" to="odometry/filtered"/>
 
 
   </node>

@@ -8,13 +8,13 @@ transform_tolerance: 0.5
 
 resolution: 0.05
 
-obstacle_range: 5
-raytrace_range: 10
+obstacle_range: 10
+raytrace_range: 20
 
 
 #layer definitions
 static:
-    map_topic: atrvjr/odom   #estava a map
+    map_topic: /map   #estava a map
     subscribe_to_updates: true
 
 obstacles_laser:
