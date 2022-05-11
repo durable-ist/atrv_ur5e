@@ -13,10 +13,10 @@
   
   <xacro:include filename="$(find ur_e_description)/urdf/ur5e.urdf.xacro"/>
 
-  <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
+  <xacro:include filename="$(find ur_e_description)/urdf/_d435.urdf.xacro" />
 
   <sensor_d435 parent="${ns}wrist_2_link" name="${ns}camera">
-    <origin xyz="0 0 0.15" rpy="0 0 0"/>
+    <origin xyz="0 0 0.15" rpy="0 0 1.5"/>
   </sensor_d435>
 
 
