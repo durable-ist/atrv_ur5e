@@ -50,6 +50,8 @@
       <updateRate>20.0</updateRate>
       <bodyName>atrvjr/novatel</bodyName>
       <topicName>fix</topicName>
+      <referenceLatitude>38.540992</referenceLatitude>
+      <referenceLongitude>-7.961719</referenceLongitude> 
       <velocityTopicName>fix_velocity</velocityTopicName>
       <drift>0 0 0</drift>
       <gaussianNoise>0.0 0.0 0.0</gaussianNoise>
