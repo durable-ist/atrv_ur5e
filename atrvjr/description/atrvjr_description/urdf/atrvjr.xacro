@@ -153,6 +153,14 @@
         <child link="${prefix}mpuimu_frame"/>
     </joint>
 
+    <link name="${prefix}imu_link"/>
+
+    <joint name="${prefix}imu_joint" type="fixed">
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+        <parent link="${prefix}base_link"/>
+        <child link="${prefix}imu_link"/>
+    </joint>
+
     <link name="${prefix}novatel"/>
 
     <joint name="${prefix}novatel_joint" type="fixed">

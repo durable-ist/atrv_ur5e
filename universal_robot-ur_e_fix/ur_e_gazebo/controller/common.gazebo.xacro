@@ -25,14 +25,14 @@
   </gazebo>
 
 
-<gazebo reference="mpuimu_frame">
+<!-- <gazebo reference="mpuimu_frame">
     <gravity>true</gravity>
     <sensor name="mpu_imu" type="imu">
         <always_on>true</always_on>
         <update_rate>100</update_rate>
         <topic>/imu</topic>
         <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
-            <topicName>/imu/data</topicName>
+            <topicName>atrvjr/imu/data</topicName>
             <bodyName>mpuimu_frame</bodyName>
             <updateRateHZ>100</updateRateHZ>
             <gaussianNoise>0.0</gaussianNoise>
@@ -42,7 +42,23 @@
         </plugin>
         <pose>0 0 0 0 0 0</pose>
     </sensor>
-</gazebo>
+</gazebo> -->
+
+<gazebo>
+    <plugin name="imu_controller" filename="libhector_gazebo_ros_imu.so">
+      <robotNamespace>/atrvjr</robotNamespace>
+      <updateRate>50.0</updateRate>
+      <bodyName>atrvjr/imu_link</bodyName>
+      <topicName>imu/data</topicName>
+      <frameId>imu_link</frameId>
+      <accelDrift>0.00 0.00 0.00</accelDrift>
+      <accelGaussianNoise>0.001 0.001 0.001</accelGaussianNoise>
+      <rateDrift>0.00 0.00 0.00 </rateDrift>
+      <rateGaussianNoise>0.001 0.001 0.001 </rateGaussianNoise>
+      <headingDrift>0.00</headingDrift>
+      <headingGaussianNoise>0.001</headingGaussianNoise>
+    </plugin>
+  </gazebo>
 
  <gazebo>
     <plugin name="novatel_gps_sim" filename="libhector_gazebo_ros_gps.so">

@@ -40,11 +40,11 @@
 
 <launch>
   <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform_node" clear_params="true">
-    <rosparam command="load" file="$(find robot_localization)/params/navsat_transform_template.yaml" />
+    <rosparam command="load" file="$(find robot_localization)/params/navsat_transform_template_atrv.yaml" />
 
     <remap from="imu/data" to="/atrvjr/imu/data"/>
     <remap from="gps/fix" to="/atrvjr/fix"/>
-    <remap from="odometry/filtered" to="/atrvjr/odometry/filtered"/>    
+    <remap from="odometry/filtered" to="/atrvjr/odometry/filtered/global"/>    
 
     <!-- POR ESTES REMAPS COM UM ARG PARA O MBZIRC2020_0 -->
 
