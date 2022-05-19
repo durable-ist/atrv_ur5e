@@ -25,7 +25,7 @@ magnetic_declination_radians: 0
 
 
 
-yaw_offset: 0.0  # ESTAVA a ZERO
+yaw_offset: 1.57 #0.0  # ESTAVA a ZERO
 
 
 
