@@ -17,7 +17,7 @@
       <arg name="ns" default="$(arg ns)" />
     </include>
 
-    <include file="$(find robot_localization)/launch/navsat_transform_template.launch" />
+    <include file="$(find robot_localization)/launch/navsat_transform_template_atrv_sim.launch" />
 
     <include file="$(find ur5_e_moveit_config_joao)/launch/move_group.launch"/>
 
@@ -37,7 +37,7 @@
     </group>
 
     <group unless="$(arg load_map)">
-        <include file="$(find husky_navigation)/launch/move_base_mapless_demo.launch" />
+        <include file="$(find husky_navigation)/launch/move_base_sim.launch" />
     </group>
 
     <!-- <include file="$(find laser_line_extraction)/launch/example.launch"/> -->

@@ -50,7 +50,7 @@
       <updateRate>50.0</updateRate>
       <bodyName>atrvjr/imu_link</bodyName>
       <topicName>imu/data</topicName>
-      <frameId>imu_link</frameId>
+      <frameId>atrvjr/imu_link</frameId>
       <accelDrift>0.00 0.00 0.00</accelDrift>
       <accelGaussianNoise>0.001 0.001 0.001</accelGaussianNoise>
       <rateDrift>0.00 0.00 0.00 </rateDrift>
@@ -73,7 +73,7 @@
       <gaussianNoise>0.0 0.0 0.0</gaussianNoise>
       <velocityDrift>0 0 0</velocityDrift>
       <velocityGaussianNoise>0.0 0.0 0.0</velocityGaussianNoise>
-      <frameId>novatel</frameId>
+      <frameId>atrvjr/novatel</frameId>
     </plugin>
  </gazebo>
 
